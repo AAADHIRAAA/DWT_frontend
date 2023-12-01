@@ -69,7 +69,7 @@ const Spreadsheet = () => {
     try {
       setIsLoadingStats(true);
       if(userId){
-      const response = await fetch(`https://digitized-work-tracker-backend-huem4aror-vishal-marvel.vercel.app/api/v1/users/view-books/${userId}`);
+      const response = await fetch(`https://digitized-work-tracker-backend.vercel.app/api/v1/users/view-books/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
