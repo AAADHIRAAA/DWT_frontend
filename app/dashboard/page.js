@@ -15,7 +15,7 @@ const Dashboard = () => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch('https://digitized-work-tracker-backend-huem4aror-vishal-marvel.vercel.app/api/v1/books/statistics-for-date');
+        const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/books/statistics-for-date');
         const data = await response.json();
        
         setBooksScanned(data.booksScannedToday);
