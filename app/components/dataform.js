@@ -72,7 +72,7 @@ const DataForm = () => {
         userName: userName,
      };
 
-      const response = await fetch('https://digitized-work-tracker-backend-huem4aror-vishal-marvel.vercel.app/api/v1/books/save-book-data', {
+      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/books/save-book-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
