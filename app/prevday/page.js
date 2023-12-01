@@ -19,7 +19,7 @@ const PrevDay = () => {
   try {
     setIsLoadingStats(true);
     
-      const response = await fetch('https://digitized-work-tracker-backend-huem4aror-vishal-marvel.vercel.app/api/v1/books/statistics-prev-date');
+      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/books/statistics-prev-date');
       const data = await response.json();
       console.log('Fetched data:', data); 
       setBooksScanned(data.booksScannedPreviousDay);
