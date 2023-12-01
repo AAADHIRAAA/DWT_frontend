@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */
+
+
+
+body {
+	@apply bg-white text-black; 
+	margin: 0;
+	padding: 0;
+  }
+  
+  header {
+	@apply flex justify-between items-center p-4 m-4 rounded-md shadow-md;
+	
+  }
+  
+  
+  .custom-heading {
+	@apply text-3xl font-bold text-sky-800; 
+	text-align: center;
+	padding-bottom: 2rem;
+
+  }
+ 
+
+  
+.DashboardContainer p {
+	animation: countUp 3s ease-in-out infinite;
+  }
+  
+  @keyframes countUp {
+	from {
+	  transform: translateY(-10px);
+	}
+	to {
+	  transform: translateY(0);
+	}
+  }
+
+
+
+* {
+	@apply box-border;
+  }
+  
+  html {
+	@apply font-sans;
+	font-size: 16px;
+	line-height: 1.45;
+  }
+  
+  h1,
+  h2,
+  h3 {
+	@apply leading-normal m-0;
+  }
+  
+  h2 {
+	@apply mt-4;
+  }
+  
+  main {
+	@apply bg-gray-100 shadow-md;
+  }
+  
+
+  .button {
+	@apply bg-sky-800 border-none rounded-md  py-2 px-4 text-white w-full transition duration-150 ease-in-out;
+  }
+  
+  .button:hover {
+	@apply bg-sky-600;
+  }
+  
+  /* App Actions */
+  .app-actions {
+	@apply flex gap-4 justify-between mt-4;
+  }
+  
+  /* Cards */
+  .card {
+	@apply bg-blue-400 shadow-sm flex flex-col p-4;
+  }
+  
+  .card p {
+	@apply my-2 mx-4;
+  }
+  
+  .card button {
+	@apply mt-auto;
+  }
+  
+  /* Footer */
+  footer {
+	@apply flex flex-wrap justify-center gap-8 p-4 bg-blue-500 text-white;
+  }
+  
+  /* Table */
+  table {
+	@apply mx-auto w-full sm:w-auto shadow-md border-collapse;
+  }
+  
+  th {
+	@apply p-4 bg-sky-800 text-white text-left;
+  }
+  
+  th:first-of-type {
+	@apply rounded-tl-2xl;
+  }
+  
+  th:last-of-type {
+	@apply rounded-tr-2xl;
+  }
+  
+  tr {
+	@apply bg-white;
+  }
+  
+  tr:hover {
+	@apply bg-gray-300;
+  }
+  
+  td {
+	@apply p-4 text-sky-700;
+  }
+  
+  /* Button Container */
+  .btn-container {
+	@apply m-auto w-80 mt-4 mb-4 flex items-center justify-center gap-8 p-8;
+  }
+  
+  .btn-container button {
+	@apply border-none py-2 px-4 bg-sky-800 text-white rounded-md cursor-pointer;
+  }
+  
+  .btn-container button:disabled {
+	@apply cursor-not-allowed bg-gray-300 text-opacity-25;
+  }
+
+  @media only screen and (max-width: 768px) {
+	.mobile-view-table {
+	  /* Adjust styles to properly display the Previous Day Stats for mobile */
+	  margin-left: 10px; /* Example margin adjustment */
+	  margin-right: 10px;
+	  /* Add any other necessary styling */
+	}
+  }
+
+  .shadow-custom {
+	box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  }
