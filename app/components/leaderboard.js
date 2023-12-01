@@ -105,7 +105,7 @@ const LeaderBoard = () => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()} >
-          {rows.map((row) => {
+          {rows.map((row,index) => {
             prepareRow(row);
             return (
               <tr key={index} {...row.getRowProps()} >
