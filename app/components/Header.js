@@ -1,7 +1,7 @@
 "use client"
 import React,{useEffect, useState} from "react";
 import Link from "next/link";
-import {UserButton, useUser} from '@clerk/nextjs';
+import {RedirectToSignIn, UserButton, useUser} from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
@@ -77,11 +77,12 @@ const Header = () => {
           <>
           {!user && (
             <>
-              <Link href="/machine" className="mr-4">
-                <h2 className="mb-3 text-sky-800 text-lg">
-                 Login
-                </h2>
-              </Link>
+              {/*<Link href="/machine" className="mr-4">*/}
+              {/*  <h2 className="mb-3 text-sky-800 text-lg">*/}
+              {/*   Login*/}
+              {/*  </h2>*/}
+              {/*</Link>*/}
+                <RedirectToSignIn redirectUrl={"/sign-in"}/>
               <div className="mr-2">
                 <UserButton afterSignOutUrl="/"/>
               </div>
