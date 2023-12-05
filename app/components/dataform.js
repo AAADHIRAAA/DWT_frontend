@@ -145,11 +145,11 @@ const DataForm = () => {
           <input type="text" name="title" value={formData.title} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
           <input type="number" name="pages_scanned" value={formData.pages_scanned} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
           <input type="text" name="ID_url" value={formData.ID_url} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
-          <input type="text" name="author_name" value={formData.author_name} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
-          <input type="text" name="publisher_name" value={formData.publisher_name} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
-          <input type="number" name="year" value={formData.year} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
-          <input type="string" name="isbn" value={formData.isbn} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
-          <input type="text" name="language" value={formData.language} onChange={handleInputChange} required style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
+          <input type="text" name="author_name" value={formData.author_name} onChange={handleInputChange}  style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
+          <input type="text" name="publisher_name" value={formData.publisher_name} onChange={handleInputChange}  style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
+          <input type="number" name="year" value={formData.year} onChange={handleInputChange}  style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
+          <input type="string" name="isbn" value={formData.isbn} onChange={handleInputChange}  style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
+          <input type="text" name="language" value={formData.language} onChange={handleInputChange}  style={{ padding: '10px', backgroundColor: '#dcdcdc' }} />
         </div>
       </div>
       <div className="mt-4 ml-auto w-40">
