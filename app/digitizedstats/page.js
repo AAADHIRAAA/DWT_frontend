@@ -123,7 +123,7 @@ const SpreadsheetMonth = () => {
  } = useTable(
   { columns, 
     data: rowData ,
-    initialState: { pageSize: 7 },
+    initialState: { pageSize: 5 },
   },
   useSortBy,
   usePagination
@@ -149,8 +149,8 @@ const SpreadsheetMonth = () => {
     <div style={{marginTop:'50px'}}>
     
         <h1  className='custom-heading' >Digitized Books Stats</h1>
-      <div className=" overflow-x-auto">
-      <table {...getTableProps()} className=" divide-y divide-gray-200" style={{ minWidth: '60%' }}>
+      <div className="m-4 p-4 overflow-x-scroll  flex justify-center justify-items-center">
+      <table {...getTableProps()} className="ml-8 divide-y divide-gray-200 max-w-[95%]" >
         <thead>
           {headerGroups.map((headerGroup,index) => (
             <tr key={index} {...headerGroup.getHeaderGroupProps()}  >
