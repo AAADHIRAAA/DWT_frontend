@@ -34,35 +34,35 @@ const SpreadsheetMonth = () => {
       accessor: (row, index) => index + 1, // Automatically generate serial number
     },
     {
-        Header: 'User Name',
+        Header: 'Scan Agent',
         accessor: 'userName',
       },
       {
-        Header: 'Scanner Number',
+        Header: 'Scanner#',
         accessor: 'scribe_number',
       },
      {
-       Header: 'Book Name',
+       Header: 'Title',
        accessor: 'title',
      },
      {
-        Header: 'Scanned at',
+        Header: 'Scan Date',
         accessor: 'scanned_at',
       },
      {
-       Header: 'Pages Scanned',
+       Header: '#Pages',
        accessor: 'pages_scanned',
      },
      {
-      Header: 'Archieve Identifier',
+      Header: 'Identifier',
       accessor: 'ID_url',
     },
     {
-      Header: 'Author Name',
+      Header: 'Author',
       accessor: 'author_name',
     },
     {
-      Header: 'Publisher Name',
+      Header: 'Publisher',
       accessor: 'publisher_name',
     },
     {
