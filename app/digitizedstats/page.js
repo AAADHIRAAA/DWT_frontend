@@ -150,7 +150,7 @@ const SpreadsheetMonth = () => {
     
         <h1  className='custom-heading' >Digitized Books Stats</h1>
       <div className="m-4 p-4 overflow-x-scroll  flex justify-center justify-items-center">
-      <table {...getTableProps()} className="ml-8 divide-y divide-gray-200 max-w-[95%]" >
+      <table {...getTableProps()} className="ml-8 divide-y divide-gray-200 max-w-[100%]" >
         <thead>
           {headerGroups.map((headerGroup,index) => (
             <tr key={index} {...headerGroup.getHeaderGroupProps()}  >
