@@ -1,7 +1,7 @@
 "use client"
 import React,{useEffect, useState} from "react";
 import Link from "next/link";
-import {RedirectToSignIn, UserButton, useUser} from '@clerk/nextjs';
+import {RedirectToSignIn, SignInButton, UserButton, useUser} from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
@@ -82,7 +82,7 @@ const Header = () => {
               {/*   Login*/}
               {/*  </h2>*/}
               {/*</Link>*/}
-                <RedirectToSignIn redirectUrl={"/sign-in"}/>
+                <SignInButton />
               <div className="mr-2">
                 <UserButton afterSignOutUrl="/"/>
               </div>
