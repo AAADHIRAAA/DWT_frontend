@@ -33,19 +33,19 @@ const LeaderBoardMonth = () => {
       accessor: (row, index) => index + 1, // Automatically generate serial number
     },
      {
-       Header: 'User Name',
+       Header: 'Scan Agent',
        accessor: 'username',
      },
      {
-        Header: 'Scribe Number',
+        Header: 'Scribe#',
         accessor: 'scribeNumber',
       },
       {
-        Header: 'Total Books Scanned',
+        Header: 'Total Books#',
         accessor: 'totalBooks',
       },
      {
-       Header: 'Total Pages Scanned',
+       Header: 'Total Pages#',
        accessor: 'totalPages',
      },
      

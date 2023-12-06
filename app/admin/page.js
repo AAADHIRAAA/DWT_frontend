@@ -98,7 +98,7 @@ const MonthStats = () => {
              marginBottom:'40px',
           }}>
         <Link href="/digitizedstats">
-        <h1 style={{color:'white',marginTop:'20px',fontSize:'20px'}}>Digitized Books Stats</h1>
+        <h1 style={{color:'white',marginTop:'20px',fontSize:'20px'}}>Digitization Stats</h1>
         </Link>
         </div>
         </div>
