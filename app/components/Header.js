@@ -82,7 +82,7 @@ const Header = () => {
               {/*   Login*/}
               {/*  </h2>*/}
               {/*</Link>*/}
-                <button className={"bg-indigo-950 text-white p-3 rounded-2xl"}>
+                <button className={"bg-sky-800 text-white p-3 rounded-2xl"}>
                 <SignInButton />
                 </button>
               <div className="mr-2">
