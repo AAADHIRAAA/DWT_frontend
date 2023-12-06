@@ -134,9 +134,9 @@ const DataForm = () => {
         <div style={{ color:'#0369a1',display: 'flex', flexDirection: 'column', gap: '47px' }}>
           <label>Book Name:</label>
           <label>Total Pages:</label>
-          <label>Archive Identifier:</label>
-          <label>Author Name:</label>
-          <label>Publisher Name:</label>
+          <label>Identifier:</label>
+          <label>Author:</label>
+          <label>Publisher:</label>
           <label>Published Year:</label>
           <label>ISBN:</label>
           <label>Language:</label>
