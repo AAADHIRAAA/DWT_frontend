@@ -22,26 +22,59 @@ const Header = () => {
     }
  };
 
+ const getTimeString = (date) => {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+};
+ const storeFirstLoginTime = async () => {
+  try {
 
+    const storedFirstLoginTimes = JSON.parse(localStorage.getItem('firstLoginTimes')) || {};
+    const currentDate = new Date().toLocaleDateString('en-US');
+    const currentTime = new Date();
+    await axios.post('http://digitized-work-tracker-backend.vercel.app/api/v1/users/login', {
+      userId: user.id,
+      userName: user.fullName,
+      scannerNumber: selectedScribe,
+      firstLoginTime: storedFirstLoginTimes[user.id].time,
+      date: currentDate
+    });
+    if (!storedFirstLoginTimes[user.id] || storedFirstLoginTimes[user.id].date !== currentDate) {
+      const timeString = getTimeString(currentTime);
+      storedFirstLoginTimes[user.id] = {date: currentDate, time: timeString};
+      localStorage.setItem('firstLoginTimes', JSON.stringify(storedFirstLoginTimes));
+      console.log("login1");
+      // Make a POST request to the backend API to store first login time
 
- useEffect(() => {
-    getScribeNumber();
-    if(user){
-      const userRole = user.publicMetadata.userRole;
-      setIsAdmin(userRole === 'admin');
-      const storedFirstLoginTimes = JSON.parse(localStorage.getItem('firstLoginTimes')) || {};
-      const currentDate= new Date().toLocaleDateString();
-      if (!storedFirstLoginTimes[user.id] || storedFirstLoginTimes[user.id].date !== currentDate) {
-        const currentTime = new Date().toLocaleString();
-        storedFirstLoginTimes[user.id] = { date: currentDate, time: currentTime };
-        localStorage.setItem('firstLoginTimes', JSON.stringify(storedFirstLoginTimes));
-        setLoginTime(currentTime);
-      } else {
-        setLoginTime(storedFirstLoginTimes[user.id].time);
+      if (!loginTime) {
+        setLoginTime(getTimeString(new Date()));
+        console.log("loggedin");
       }
-    }
     
- }, [user]);
+    }
+    if (!loginTime) {
+      setLoginTime(storedFirstLoginTimes[user.id].time);
+      console.log("loggedin");
+    }
+  } catch (error) {
+    console.error('Error storing first login time:', error);
+
+  }
+};
+
+useEffect(() => {
+  getScribeNumber();
+  if (user) { 
+    const userRole = user.publicMetadata.userRole;
+    setIsAdmin(userRole === 'admin');
+   
+  }
+  if(selectedScribe){
+    storeFirstLoginTime();
+  }
+}, [user,selectedScribe]);
 
 
   return (
