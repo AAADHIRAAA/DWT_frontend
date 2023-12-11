@@ -1,7 +1,7 @@
 "use client"
 import React,{useEffect, useState} from "react";
 import Link from "next/link";
-import {RedirectToSignIn, SignInButton, UserButton, useUser} from '@clerk/nextjs';
+import {RedirectToSignIn, SignInButton, UserButton, useClerk,useUser} from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
@@ -11,7 +11,69 @@ const Header = () => {
   const [selectedScribe, setSelectedScribe] = useState(null);
   const { user } = useUser();
   const [loginTime, setLoginTime] = useState(null);
+  const [logoutTime, setLogoutTime] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [issues, setIssues] = useState('');
+  const [userId, setUserId] = useState(null);
+  const { signOut } = useClerk();
+
+  useEffect(() => {
+    
+    if (user) {
+      setUserId(user.id);
+      console.log('User ID:', user.id);
+    }
+  }, [user,userId]);
+
+  const handleLogout = async() => {
+    
+    const confirmation = window.confirm('Are you sure to end the day?  This will end the day');
+    const getTimeString = (date) => {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    };
+    if (confirmation) {
+      const currentTime = new Date();
+      const timeString = getTimeString(currentTime);
+      setLogoutTime(timeString); 
+      setShowModal(true);
+      
+    }
+  };
+
+  const handleIssuesSubmit = async () => {
+    if (issues.trim() === '') {
+      alert('Please enter your issues before submitting.');
+    } 
+    else {
+      
+      try {
+     
+      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/users/issue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({userId, logoutTime, issues }),
+      });
+
+      if (response.ok) {
+        await signOut();
  
+        router.push('/');
+      } else {
+        console.error('Failed to store issues and logout time');
+     
+      }
+    } catch (error) {
+      console.error('Error:', error);
+ 
+    }
+  }
+  };
+
   const getScribeNumber = () => {
     const storedScribe = localStorage.getItem('selectedScribe');
     if (!storedScribe) {
@@ -34,7 +96,7 @@ const Header = () => {
     const storedFirstLoginTimes = JSON.parse(localStorage.getItem('firstLoginTimes')) || {};
     const currentDate = new Date().toLocaleDateString('en-US');
     const currentTime = new Date();
-    await axios.post('http://digitized-work-tracker-backend.vercel.app/api/v1/users/login', {
+    await axios.post('https://digitized-work-tracker-backend.vercel.app/api/v1/users/login', {
       userId: user.id,
       userName: user.fullName,
       scannerNumber: selectedScribe,
@@ -146,7 +208,22 @@ useEffect(() => {
                 <div className="mr-4">
                   <UserButton afterSignOutUrl="/"/>
                 </div>
-                
+                <div>
+                <button onClick={handleLogout} className="ml-4 bg-red-500 hover:bg-red-700 text-white  py-2 px-2 rounded">End the day</button>
+                <div className='ml-4 text-sky-800'>{logoutTime && <p>Logout Time: {logoutTime}</p>}</div>
+                {showModal && (
+                <div >
+                  <div className='mr-4 ml-8'>
+       
+                  <h1 className='text-sky-800 mt-4'>Enter any issues:</h1>
+                  <textarea value={issues} className='border border-gray-300 p-2 rounded-md  h-24 mt-2 focus:outline-none focus:border-sky-500 text-sky-800' 
+                  placeholder="Enter your issues here..."
+                  onChange={(e) => setIssues(e.target.value)} />
+                  <button onClick={handleIssuesSubmit} className='border border-gray-300 p-2 rounded-md  h-15 ml-2 bg-sky-800 text-white'>Submit</button>
+                  </div>
+                </div>
+                )}
+              </div>      
               </>
             )}
             
