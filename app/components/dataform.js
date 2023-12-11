@@ -104,8 +104,8 @@ const DataForm = () => {
   const validateForm = () => {
     const { title, pages_scanned, ID_url, author_name, publisher_name, year, isbn, language } = formData;
 
-    if (!title || !pages_scanned || !ID_url || !author_name || !publisher_name || !year || !isbn || !language) {
-      alert('All fields are required');
+    if (!title || !pages_scanned || !ID_url ) {
+      alert('Title, Total pages and IDentifier  fields are required');
       return false;
     }
 
@@ -114,7 +114,7 @@ const DataForm = () => {
       return false;
     }
 
-    if (year <= 0) {
+    if (year && year <= 0) {
       alert('Year of publication should be a positive number');
       return false;
     }
