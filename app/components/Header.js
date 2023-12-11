@@ -34,7 +34,7 @@ const Header = () => {
     const storedFirstLoginTimes = JSON.parse(localStorage.getItem('firstLoginTimes')) || {};
     const currentDate = new Date().toLocaleDateString('en-US');
     const currentTime = new Date();
-    await axios.post('http://digitized-work-tracker-backend.vercel.app/api/v1/users/login', {
+    await axios.post('https://digitized-work-tracker-backend.vercel.app/api/v1/users/login', {
       userId: user.id,
       userName: user.fullName,
       scannerNumber: selectedScribe,

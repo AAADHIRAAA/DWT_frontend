@@ -51,7 +51,7 @@ export default function WorkReport() {
       
       try {
      
-      const response = await fetch('http://digitized-work-tracker-backend.vercel.app/api/v1/users/issue', {
+      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/users/issue', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
