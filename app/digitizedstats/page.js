@@ -48,37 +48,43 @@ const SpreadsheetMonth = () => {
         Header: "Scan Date",
         accessor: "scanned_at",
       },
-      {
-        Header: "#Pages",
-        accessor: "pages_scanned",
-      },
-      {
-        Header: "Identifier",
-        accessor: "ID_url",
-      },
-      {
-        Header: "Author",
-        accessor: "author_name",
-      },
-      {
-        Header: "Publisher",
-        accessor: "publisher_name",
-      },
-      {
-        Header: "Year",
-        accessor: "year",
-      },
-      {
-        Header: "ISBN",
-        accessor: "isbn",
-      },
-      {
-        Header: "Language",
-        accessor: "language",
-      },
-    ],
-    []
-  );
+     {
+       Header: '#Pages',
+       accessor: 'pages_scanned',
+     },
+     {
+      Header: 'Identifier',
+      accessor: 'ID_url',
+      Cell: ({ row }) => (
+        <a href={row.original.ID_url} target="_self" >
+          {row.original.ID_url.split('details/')[1]}
+        </a>
+      ),
+    },
+    {
+      Header: 'Author',
+      accessor: 'author_name',
+    },
+    {
+      Header: 'Publisher',
+      accessor: 'publisher_name',
+    },
+    {
+      Header: 'Year',
+      accessor: 'year',
+    },
+    {
+      Header: 'ISBN',
+      accessor: 'isbn',
+    },
+    {
+      Header:'Language',
+      accessor:'language',
+    }
+     
+  ],
+  []
+ );
 
   const fetchData = async () => {
     try {

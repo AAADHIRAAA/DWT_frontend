@@ -19,47 +19,53 @@ const Spreadsheet = () => {
     }
   }, [user, userId]);
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "S.No",
-        accessor: (row, index) => index + 1, // Automatically generate serial number
-      },
-      {
-        Header: "Book Name",
-        accessor: "title",
-      },
-      {
-        Header: "Total Pages Scanned",
-        accessor: "pages_scanned",
-      },
-      {
-        Header: "Archieve Identifier",
-        accessor: "ID_url",
-      },
-      {
-        Header: "Author Name",
-        accessor: "author_name",
-      },
-      {
-        Header: "Publisher Name",
-        accessor: "publisher_name",
-      },
-      {
-        Header: "Published Year",
-        accessor: "year",
-      },
-      {
-        Header: "ISBN",
-        accessor: "isbn",
-      },
-      {
-        Header: "Language",
-        accessor: "language",
-      },
-    ],
-    []
-  );
+ const columns = useMemo(
+  () => [
+    {
+      Header: 'S.No',
+      accessor: (row, index) => index + 1, // Automatically generate serial number
+    },
+     {
+       Header: 'Book Name',
+       accessor: 'title',
+     },
+     {
+       Header: 'Total Pages Scanned',
+       accessor: 'pages_scanned',
+     },
+     {
+      Header: 'Archieve Identifier',
+      accessor: 'ID_url',
+      Cell: ({ row }) => (
+        <a href={row.original.ID_url} target="_self" >
+          {row.original.ID_url.split('details/')[1]}
+        </a>
+      ),
+    },
+    {
+      Header: 'Author Name',
+      accessor: 'author_name',
+    },
+    {
+      Header: 'Publisher Name',
+      accessor: 'publisher_name',
+    },
+    {
+      Header: 'Published Year',
+      accessor: 'year',
+    },
+    {
+      Header: 'ISBN',
+      accessor: 'isbn',
+    },
+    {
+      Header:'Language',
+      accessor:'language',
+    }
+     
+  ],
+  []
+ );
 
   const fetchData = async () => {
     try {
