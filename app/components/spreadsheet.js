@@ -38,6 +38,11 @@ const Spreadsheet = () => {
      {
       Header: 'Archieve Identifier',
       accessor: 'ID_url',
+      Cell: ({ row }) => (
+        <a href={row.original.ID_url} target="_self" >
+          {row.original.ID_url.split('details/')[1]}
+        </a>
+      ),
     },
     {
       Header: 'Author Name',
