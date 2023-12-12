@@ -36,10 +36,6 @@ const LeaderBoardMonth = () => {
         accessor: "username",
       },
       {
-        Header: "Scribe#",
-        accessor: "scribeNumber",
-      },
-      {
         Header: "Total Books#",
         accessor: "totalBooks",
       },
