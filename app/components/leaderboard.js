@@ -48,7 +48,7 @@ const LeaderBoard = () => {
     try {
       setIsLoadingStats(true);
       
-      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/books/leaderboard');
+      const response = await fetch('https://digitized-work-tracker-backend-vishal-marvel.vercel.app/api/v1/books/leaderboard');
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

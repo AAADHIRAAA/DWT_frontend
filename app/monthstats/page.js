@@ -58,7 +58,7 @@ const LeaderBoardMonth = () => {
     try {
       setIsLoadingStats(true);
       
-      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month');
+      const response = await fetch('https://digitized-work-tracker-backend-vishal-marvel.vercel.app/api/v1/admin/leaderboard-month');
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
