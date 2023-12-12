@@ -37,7 +37,7 @@ const Spreadsheet = () => {
       Header: 'Archieve Identifier',
       accessor: 'ID_url',
       Cell: ({ row }) => (
-        <a href={row.original.ID_url} target="_self" >
+        <a href={row.original.ID_url} target="_blank" rel="noopener noreferrer" >
           {row.original.ID_url.split('details/')[1]}
         </a>
       ),
