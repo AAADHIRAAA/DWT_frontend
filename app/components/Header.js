@@ -3,6 +3,7 @@ import React,{useEffect, useState} from "react";
 import Link from "next/link";
 import {RedirectToSignIn, SignInButton, UserButton, useClerk,useUser} from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const Header = () => {
 
@@ -103,7 +104,7 @@ const Header = () => {
       firstLoginTime: storedFirstLoginTimes[user.id].time,
       date: currentDate
     });
-    if (!storedFirstLoginTimes[user.id] || storedFirstLoginTimes[user.id].date !== currentDate) {
+    if (storedFirstLoginTimes[user.id] || storedFirstLoginTimes[user.id].date !== currentDate) {
       const timeString = getTimeString(currentTime);
       storedFirstLoginTimes[user.id] = {date: currentDate, time: timeString};
       localStorage.setItem('firstLoginTimes', JSON.stringify(storedFirstLoginTimes));
