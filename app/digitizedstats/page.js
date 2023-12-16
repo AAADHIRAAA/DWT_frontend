@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import { useTable, useSortBy, usePagination } from "react-table";
+import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
+import { Globalfilter } from "../components/Globalfilter";
 
 const SpreadsheetMonth = () => {
   const [rowData, setRowData] = useState([]);
@@ -116,17 +117,20 @@ const SpreadsheetMonth = () => {
     previousPage,
     canNextPage,
     canPreviousPage,
-    state: { pageIndex },
+    state: { pageIndex ,globalFilter},
     pageCount,
     gotoPage,
+    setGlobalFilter,
   } = useTable(
     { columns, data: rowData, initialState: { pageSize: 5 } },
+    useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+   
   );
 
   console.log(rowData);
-
+  
   return (
     <>
       {!isAdmin && (
@@ -145,8 +149,14 @@ const SpreadsheetMonth = () => {
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
+            
             <h1 className="custom-heading">Digitized Books Stats</h1>
-            <div className="m-8 p-4  overflow-x-auto">
+            
+            
+              <Globalfilter filter = {globalFilter} setFilter={setGlobalFilter}/>
+              
+            </div>
+            <div className="m-6 p-4  overflow-x-auto">
               <table
                 {...getTableProps()}
                 className=" divide-y divide-gray-200"
@@ -218,7 +228,7 @@ const SpreadsheetMonth = () => {
                 Last
               </button>
             </div>
-          </div>
+          
         </>
       )}
     </>
