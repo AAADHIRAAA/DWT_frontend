@@ -74,7 +74,7 @@ const DataForm = () => {
           userId: userId,
           userName: userName,
         };
-
+      
         const response = await fetch(
           "https://digitized-work-tracker-backend.vercel.app/api/v1/books/save-book-data",
           {
@@ -88,6 +88,7 @@ const DataForm = () => {
 
         if (response.ok) {
           setFormData({
+            correction:"",
             title: "",
             pages_scanned: "",
             ID_url: "",
@@ -97,6 +98,7 @@ const DataForm = () => {
             isbn: "",
             language: "",
           });
+          setCorrectionChecked(false);
         } else {
           console.error("Failed to submit the form to the backend");
         }
@@ -161,9 +163,9 @@ const DataForm = () => {
                 }}
               >
                 <label>Correction:</label>
-                <label>Book Name:</label>
-                <label>Total Pages:</label>
-                <label>Identifier:</label>
+                <label>Book Name<span style={{ color: 'red' }}>*</span>:</label>
+                <label>Total Pages<span style={{ color: 'red' }}>*</span>:</label>
+                <label>Identifier<span style={{ color: 'red' }}>*</span>:</label>
                 <label>Author:</label>
                 <label>Publisher:</label>
                 <label>Published Year:</label>

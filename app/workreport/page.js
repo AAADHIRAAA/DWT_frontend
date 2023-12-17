@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Image from 'next/image';
 import UserDashboard from "../userdashboard/page";
 import DataForm from "../components/dataform";
+import ReminderNotification from "../components/notification";
 
 export default function WorkReport() {
 
@@ -14,18 +15,23 @@ export default function WorkReport() {
       behavior: 'smooth', 
     });
   };
+
+
+
   return (
     <>
     <Header/>
   
       <main className="flex flex-col items-center justify-between ">
+      <div className='ml-auto mr-8'><ReminderNotification/> </div>  
           <div >
+          
            <UserDashboard />
-              
+            
             <DataForm />
-           
+         
           </div>
-        
+       
         <button  onClick={scrollToBottom} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
         <Image src="/scroll-down.png" alt="Scrolldown" width={20} height={20} />
         </button>
