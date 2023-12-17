@@ -52,8 +52,8 @@ const LeaderBoard = () => {
 
       const data = await response.json();
       setRowData(data);
-      console.log("Fetched Data:", data);
-      console.log("Row Data:", rowData); // Log immediately after setRowData
+    
+     
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -63,7 +63,6 @@ const LeaderBoard = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: rowData }, useSortBy);
 
-  console.log(rowData);
 
   return (
     <div className="overflow-x-auto">

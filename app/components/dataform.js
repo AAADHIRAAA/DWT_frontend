@@ -8,6 +8,7 @@ const DataForm = () => {
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
+  const [correctionChecked, setCorrectionChecked] = useState(false);
   useEffect(() => {
     if (user) {
       setUserId(user.id);
@@ -29,6 +30,7 @@ const DataForm = () => {
     getScribeNumber();
   }, []);
   const [formData, setFormData] = useState({
+    correction:"",
     title: "",
     pages_scanned: "",
     ID_url: "",
@@ -38,6 +40,9 @@ const DataForm = () => {
     isbn: "",
     language: "",
   });
+  const handleCorrectionChange = () => {
+    setCorrectionChecked(!correctionChecked);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +59,9 @@ const DataForm = () => {
       // Validate that "Year" and "Pages Scanned" are positive numbers
       const isValid = validateForm();
       if (isValid) {
+        const correctionValue = correctionChecked ? "Yes" : "No";
         const data = {
+          correction: correctionValue,
           title: formData.title,
           pages_scanned: formData.pages_scanned,
           ID_url: formData.ID_url,
@@ -134,7 +141,7 @@ const DataForm = () => {
       <div className="p-4">
         <div className=" p-4 rounded-lg shadow-custom ">
           <form onSubmit={handleSubmit}>
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-sky-800 mb-4 text-center col-span-2">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-sky-800 mb-8 text-center col-span-2">
               Enter the Book Details
             </h1>
             <div
@@ -144,14 +151,16 @@ const DataForm = () => {
                 gap: "25px",
               }}
             >
+             
               <div
                 style={{
                   color: "#0369a1",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "47px",
+                  gap: "45px",
                 }}
               >
+                <label>Correction:</label>
                 <label>Book Name:</label>
                 <label>Total Pages:</label>
                 <label>Identifier:</label>
@@ -168,6 +177,17 @@ const DataForm = () => {
                   gap: "25px",
                 }}
               >
+                 <div style={{ display: 'flex', alignItems: 'center' }}>
+                  
+                  <input
+                    type="checkbox"
+                    id="correction"
+                    name="correction"
+                    checked={correctionChecked}
+                    onChange={handleCorrectionChange}
+                    style={{ marginLeft: '10px',transform: 'scale(2.0)' ,padding:"10px", marginBottom:"20px"}}
+                  />
+                </div>
                 <input
                   type="text"
                   name="title"

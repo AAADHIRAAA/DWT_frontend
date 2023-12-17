@@ -115,7 +115,7 @@ const SpreadsheetMonth = () => {
     usePagination
   );
 
-  console.log(rowData);
+ 
 
   return (
     <>

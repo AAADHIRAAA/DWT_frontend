@@ -105,7 +105,7 @@ const Spreadsheet = () => {
     gotoPage,
   } = useTable({ columns, data: rowData }, useSortBy, usePagination);
 
-  console.log(rowData);
+ 
 
   return (
     <>

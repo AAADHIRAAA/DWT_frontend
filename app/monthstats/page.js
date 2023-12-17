@@ -60,8 +60,7 @@ const LeaderBoardMonth = () => {
 
       const data = await response.json();
       setRowData(data);
-      console.log("Fetched Data:", data);
-      console.log("Row Data:", rowData); // Log immediately after setRowData
+      
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -83,7 +82,7 @@ const LeaderBoardMonth = () => {
     gotoPage,
   } = useTable({ columns, data: rowData }, useSortBy, usePagination);
 
-  console.log(rowData);
+ 
 
   return (
     <>
