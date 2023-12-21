@@ -112,7 +112,7 @@ body {
   
   /* Table */
   table {
-	@apply mx-auto w-full sm:w-auto shadow-md border-collapse;
+	@apply mx-auto  sm:w-auto shadow-md border-collapse;
   }
   
   th {
@@ -141,7 +141,7 @@ body {
   
   /* Button Container */
   .btn-container {
-	@apply m-auto w-80 mt-4 mb-4 flex items-center justify-center gap-8 p-8;
+	@apply m-auto w-80 mt-2 mb-2 flex items-center justify-center gap-8 p-4;
   }
   
   .btn-container button {

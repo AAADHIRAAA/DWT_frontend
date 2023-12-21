@@ -50,8 +50,22 @@ const LeaderBoard = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json();
-      setRowData(data);
+      // const data = await response.json();
+      // setRowData(data);
+      const fetchedData = await response.json();
+
+      // Sort the fetched data by the "scanned_at" date in descending order
+      const sortedData = fetchedData.sort((a, b) => {
+          if(a.totalBooks !==b.totalBooks){
+            return  b.totalBooks - a.totalBooks;
+          }
+          else{
+            return b.totalPages - a.totalPages;
+          }
+      }
+     );
+  
+      setRowData(sortedData);
     
      
       setIsLoadingStats(false);

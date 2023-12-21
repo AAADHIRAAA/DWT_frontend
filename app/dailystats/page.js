@@ -3,13 +3,20 @@ import React, { useEffect, useMemo, useState } from "react";
 import { usePagination, useSortBy, useTable } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
+import Image from "next/image";
 import Link from "next/link";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const SpreadsheetMonth = () => {
   const [rowData, setRowData] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useUser();
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [fullData, setFullData] = useState([]); // Store all the data
+const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
+const [isLoading, setIsLoading] = useState(false); // Loading indicator
+const [hasMore, setHasMore] = useState(true); // Whether more data is available
+const PAGE_SIZE = 50;
 
   useEffect(() => {
     if (user) {
@@ -20,7 +27,7 @@ const SpreadsheetMonth = () => {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 15 * 60 * 1000);
+    const intervalId = setInterval(fetchData,  60 * 1000);
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
@@ -87,34 +94,54 @@ const SpreadsheetMonth = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json();
-      setRowData(data);
+      // const data = await response.json();
+      // setRowData(data);
+      const fetchedData = await response.json();
 
-      setIsLoadingStats(false);
+    // Sort the fetched data by the "scanned_at" date in descending order
+    const sortedData = fetchedData.sort((a, b) =>{
+        if (a.date!==b.date){
+          return   new Date(b.date) - new Date(a.date);
+        }else{
+          return a.username.localeCompare(b.username);
+        }
+    }
+    
+    );
+
+    setFullData(sortedData);
+    setVisibleData(sortedData.slice(0, PAGE_SIZE));
+    setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
+  };
+  const fetchMoreData = () => {
+    const currentLength = visibleData.length;
+    const nextData = fullData.slice(currentLength, currentLength + PAGE_SIZE);
+    setVisibleData([...visibleData, ...nextData]);
+    setHasMore(currentLength + PAGE_SIZE < fullData.length);
   };
 
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    page,
+ 
+    rows,
     prepareRow,
-    nextPage,
-    previousPage,
-    canNextPage,
-    canPreviousPage,
-    state: { pageIndex },
-    pageCount,
-    gotoPage,
+   
   } = useTable(
-    { columns, data: rowData, initialState: { pageSize: 7 } },
+    { columns, data: visibleData, initialState: { pageSize: 50 } },
     useSortBy,
-    usePagination
-  );
 
+  );
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth', 
+    });
+  };
  
 
   return (
@@ -163,10 +190,10 @@ const SpreadsheetMonth = () => {
                   ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {page.map((row, pageIndex) => {
+                  {rows.map((row, rowIndex) => {
                     prepareRow(row);
                     return (
-                      <tr key={pageIndex} {...row.getRowProps()}>
+                      <tr key={rowIndex} {...row.getRowProps()}>
                         {row.cells.map((cell, index) => {
                           return (
                             <td
@@ -183,31 +210,18 @@ const SpreadsheetMonth = () => {
                   })}
                 </tbody>
               </table>
+              <button  onClick={scrollToBottom} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
+              <Image src="/scroll-down.png" alt="Scrolldown" width={20} height={20} />
+              </button>
+              <InfiniteScroll
+              dataLength={visibleData.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<h4 className="text-sky-800">Loading...</h4>}
+              style={{ overflow: "hidden" }} 
+            />
             </div>
-            <div className="btn-container">
-              <button disabled={pageIndex === 0} onClick={() => gotoPage(0)}>
-                First
-              </button>
-
-              <button disabled={!canPreviousPage} onClick={previousPage}>
-                Prev
-              </button>
-
-              <span>
-                {pageIndex + 1}_of_{pageCount}
-              </span>
-
-              <button disabled={!canNextPage} onClick={nextPage}>
-                Next
-              </button>
-
-              <button
-                disabled={pageIndex >= pageCount - 1}
-                onClick={() => gotoPage(pageCount - 1)}
-              >
-                Last
-              </button>
-            </div>
+         
           </div>
         </>
       )}

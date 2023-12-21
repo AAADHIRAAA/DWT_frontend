@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Image from 'next/image';
 import UserDashboard from "../userdashboard/page";
 import DataForm from "../components/dataform";
-import ReminderNotification from "../components/notification";
+
 
 export default function WorkReport() {
 
@@ -23,7 +23,7 @@ export default function WorkReport() {
     <Header/>
   
       <main className="flex flex-col items-center justify-between ">
-      <div className='ml-auto mr-8'><ReminderNotification/> </div>  
+      
           <div >
           
            <UserDashboard />

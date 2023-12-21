@@ -1,18 +1,27 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { Globalfilter } from "../components/Globalfilter";
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const SpreadsheetMonth = () => {
-  const [rowData, setRowData] = useState([]);
+ 
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useUser();
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
+
+const [fullData, setFullData] = useState([]); // Store all the data
+const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
+const [isLoading, setIsLoading] = useState(false); // Loading indicator
+const [hasMore, setHasMore] = useState(true); // Whether more data is available
+const PAGE_SIZE = 50;
+  
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
@@ -20,10 +29,11 @@ const SpreadsheetMonth = () => {
     }
   }, [user]);
 
+  
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 15 * 60 * 1000);
-    // Clean up the interval when the component unmounts
+    const intervalId = setInterval(fetchData, 10 * 60 * 1000);
+ 
     return () => clearInterval(intervalId);
   }, []);
 
@@ -31,7 +41,7 @@ const SpreadsheetMonth = () => {
     () => [
       {
         Header: "S.No",
-        accessor: (row, index) => index + 1, // Automatically generate serial number
+        accessor: (row, index) => index + 1, 
       },
       {
         Header: "Scan Agent",
@@ -98,39 +108,73 @@ const SpreadsheetMonth = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json();
-      setRowData(data);
+      const fetchedData = await response.json();
 
-      setIsLoadingStats(false);
+    const sortedData = fetchedData.sort((a, b) =>{
+        if(a.scanned_at !==b.scanned_at){
+          return new Date(b.scanned_at) - new Date(a.scanned_at);
+        }
+        else{
+            return a.userName.localeCompare(b.userName);
+        }
+    }
+      
+    );
+
+   
+    setFullData(sortedData);
+    setVisibleData(sortedData.slice(0, PAGE_SIZE));
+    setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
+  };
+
+  const fetchMoreData = () => {
+    const currentLength = visibleData.length;
+    const nextData = fullData.slice(currentLength, currentLength + PAGE_SIZE);
+    setVisibleData([...visibleData, ...nextData]);
+    setHasMore(currentLength + PAGE_SIZE < fullData.length);
+  };
+
+  const filterByDates = (rows, columnIds, filterValue) => {
+    return rows.filter((row) => {
+      return columnIds.some((columnId) => {
+        const rowValue = row.values[columnId];
+        if (rowValue) {
+          const formattedDate = new Date(rowValue).toLocaleDateString('en-US');
+          return formattedDate.includes(filterValue);
+        }
+        return false;
+      });
+    });
   };
 
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    page,
     prepareRow,
-    nextPage,
-    previousPage,
-    canNextPage,
-    canPreviousPage,
-    state: { pageIndex ,globalFilter},
-    pageCount,
-    gotoPage,
+    rows,
+    state: { globalFilter},
     setGlobalFilter,
+   
   } = useTable(
-    { columns, data: rowData, initialState: { pageSize: 5 } },
+    { columns, data: visibleData,
+    filterTypes: {
+      datetime: filterByDates,
+    },},
     useGlobalFilter,
     useSortBy,
-    usePagination,
-   
   );
+  
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth', 
+    });
+  };
 
-  
-  
   return (
     <>
       {!isAdmin && (
@@ -151,16 +195,20 @@ const SpreadsheetMonth = () => {
           <div style={{ marginTop: "50px" }}>
             
             <h1 className="custom-heading">Digitized Books Stats</h1>
-            
-            
-              <Globalfilter filter = {globalFilter} setFilter={setGlobalFilter}/>
               
             </div>
+          
+      <div className="flex justify-end mb-4 text-sky-800 mr-8">
+      <Globalfilter filter = {globalFilter} setFilter={setGlobalFilter} className="mr-8"/> 
+  
+      </div>
+          <div className="table-container relative">
             <div className="m-6 p-4  overflow-x-auto">
+            
               <table
                 {...getTableProps()}
-                className=" divide-y divide-gray-200"
-                style={{ minWidth: "60%" }}
+                className=" divide-y divide-gray-200 table"
+                style={{ Width: "100%", tableLayout: "fixed"  }}
               >
                 <thead>
                   {headerGroups.map((headerGroup, index) => (
@@ -183,16 +231,16 @@ const SpreadsheetMonth = () => {
                   ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {page.map((row, pageIndex) => {
+                  {rows.map((row, rowIndex) => {
                     prepareRow(row);
                     return (
-                      <tr key={pageIndex} {...row.getRowProps()}>
+                      <tr key={rowIndex} {...row.getRowProps()}>
                         {row.cells.map((cell, index) => {
                           return (
                             <td
                               key={index}
                               {...cell.getCellProps()}
-                              className="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl"
+                              className="px-4 py-2 text-sm sm:text-base "
                             >
                               {cell.render("Cell")}
                             </td>
@@ -203,32 +251,20 @@ const SpreadsheetMonth = () => {
                   })}
                 </tbody>
               </table>
+              
+             
             </div>
-            <div className="btn-container">
-              <button disabled={pageIndex === 0} onClick={() => gotoPage(0)}>
-                First
+              <button  onClick={scrollToBottom} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
+              <Image src="/scroll-down.png" alt="Scrolldown" width={20} height={20} />
               </button>
-
-              <button disabled={!canPreviousPage} onClick={previousPage}>
-                Prev
-              </button>
-
-              <span>
-                {pageIndex + 1}_of_{pageCount}
-              </span>
-
-              <button disabled={!canNextPage} onClick={nextPage}>
-                Next
-              </button>
-
-              <button
-                disabled={pageIndex >= pageCount - 1}
-                onClick={() => gotoPage(pageCount - 1)}
-              >
-                Last
-              </button>
+              <InfiniteScroll
+              dataLength={visibleData.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<h4 className="text-sky-800">Loading...</h4>}
+              style={{ overflow: "hidden" }} 
+            />
             </div>
-          
         </>
       )}
     </>
