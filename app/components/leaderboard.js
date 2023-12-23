@@ -56,18 +56,15 @@ const LeaderBoard = () => {
 
       // Sort the fetched data by the "scanned_at" date in descending order
       const sortedData = fetchedData.sort((a, b) => {
-          if(a.totalBooks !==b.totalBooks){
-            return  b.totalBooks - a.totalBooks;
-          }
-          else{
-            return b.totalPages - a.totalPages;
-          }
-      }
-     );
-  
+        if (a.totalBooks !== b.totalBooks) {
+          return b.totalBooks - a.totalBooks;
+        } else {
+          return b.totalPages - a.totalPages;
+        }
+      });
+
       setRowData(sortedData);
-    
-     
+
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -76,7 +73,6 @@ const LeaderBoard = () => {
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: rowData }, useSortBy);
-
 
   return (
     <div className="overflow-x-auto">

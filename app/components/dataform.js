@@ -30,7 +30,7 @@ const DataForm = () => {
     getScribeNumber();
   }, []);
   const [formData, setFormData] = useState({
-    correction:"",
+    correction: "",
     title: "",
     pages_scanned: "",
     ID_url: "",
@@ -74,7 +74,7 @@ const DataForm = () => {
           userId: userId,
           userName: userName,
         };
-      
+
         const response = await fetch(
           "https://digitized-work-tracker-backend.vercel.app/api/v1/books/save-book-data",
           {
@@ -88,7 +88,7 @@ const DataForm = () => {
 
         if (response.ok) {
           setFormData({
-            correction:"",
+            correction: "",
             title: "",
             pages_scanned: "",
             ID_url: "",
@@ -153,7 +153,6 @@ const DataForm = () => {
                 gap: "25px",
               }}
             >
-             
               <div
                 style={{
                   color: "#0369a1",
@@ -163,9 +162,15 @@ const DataForm = () => {
                 }}
               >
                 <label>Correction:</label>
-                <label>Book Name<span style={{ color: 'red' }}>*</span>:</label>
-                <label>Total Pages<span style={{ color: 'red' }}>*</span>:</label>
-                <label>Identifier<span style={{ color: 'red' }}>*</span>:</label>
+                <label>
+                  Book Name<span style={{ color: "red" }}>*</span>:
+                </label>
+                <label>
+                  Total Pages<span style={{ color: "red" }}>*</span>:
+                </label>
+                <label>
+                  Identifier<span style={{ color: "red" }}>*</span>:
+                </label>
                 <label>Author:</label>
                 <label>Publisher:</label>
                 <label>Published Year:</label>
@@ -179,15 +184,19 @@ const DataForm = () => {
                   gap: "25px",
                 }}
               >
-                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     type="checkbox"
                     id="correction"
                     name="correction"
                     checked={correctionChecked}
                     onChange={handleCorrectionChange}
-                    style={{ marginLeft: '10px',transform: 'scale(2.0)' ,padding:"10px", marginBottom:"20px"}}
+                    style={{
+                      marginLeft: "10px",
+                      transform: "scale(2.0)",
+                      padding: "10px",
+                      marginBottom: "20px",
+                    }}
                   />
                 </div>
                 <input

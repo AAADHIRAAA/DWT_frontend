@@ -1,27 +1,32 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, {useState, useEffect, useMemo, useRef} from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
+import {
+  useTable,
+  useSortBy,
+  usePagination,
+  useGlobalFilter,
+} from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { Globalfilter } from "../components/Globalfilter";
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from "react-infinite-scroll-component";
+import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 
 const SpreadsheetMonth = () => {
- 
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useUser();
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
+  const [fullData, setFullData] = useState([]); // Store all the data
+  const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
+  const [isLoading, setIsLoading] = useState(false); // Loading indicator
+  const [hasMore, setHasMore] = useState(true); // Whether more data is available
+  const PAGE_SIZE = 50;
+  const tableRef = useRef(null);
 
-const [fullData, setFullData] = useState([]); // Store all the data
-const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
-const [isLoading, setIsLoading] = useState(false); // Loading indicator
-const [hasMore, setHasMore] = useState(true); // Whether more data is available
-const PAGE_SIZE = 50;
-  
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
@@ -29,19 +34,19 @@ const PAGE_SIZE = 50;
     }
   }, [user]);
 
-  
   useEffect(() => {
     fetchData();
     const intervalId = setInterval(fetchData, 10 * 60 * 1000);
- 
+
     return () => clearInterval(intervalId);
   }, []);
+
 
   const columns = useMemo(
     () => [
       {
         Header: "S.No",
-        accessor: (row, index) => index + 1, 
+        accessor: (row, index) => index + 1,
       },
       {
         Header: "Scan Agent",
@@ -59,43 +64,53 @@ const PAGE_SIZE = 50;
         Header: "Scan Date",
         accessor: "scanned_at",
       },
-     {
-       Header: '#Pages',
-       accessor: 'pages_scanned',
-     },
-     {
-      Header: 'Identifier',
-      accessor: 'ID_url',
-      Cell: ({ row }) => (
-        <a href={row.original.ID_url} target="_blank" rel="noopener noreferrer" >
-          {row.original.ID_url.split('details/')[1]}
-        </a>
-      ),
-    },
-    {
-      Header: 'Author',
-      accessor: 'author_name',
-    },
-    {
-      Header: 'Publisher',
-      accessor: 'publisher_name',
-    },
-    {
-      Header: 'Year',
-      accessor: 'year',
-    },
-    {
-      Header: 'ISBN',
-      accessor: 'isbn',
-    },
-    {
-      Header:'Language',
-      accessor:'language',
-    }
-     
-  ],
-  []
- );
+      {
+        Header: "#Pages",
+        accessor: "pages_scanned",
+      },
+      {
+        Header: "Identifier",
+        accessor: "ID_url",
+        Cell: ({ row }) => (
+          <a
+            href={row.original.ID_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block",
+              maxWidth: "180px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {row.original.ID_url.split("details/")[1]}
+          </a>
+        ),
+      },
+      {
+        Header: "Author",
+        accessor: "author_name",
+      },
+      {
+        Header: "Publisher",
+        accessor: "publisher_name",
+      },
+      {
+        Header: "Year",
+        accessor: "year",
+      },
+      {
+        Header: "ISBN",
+        accessor: "isbn",
+      },
+      {
+        Header: "Language",
+        accessor: "language",
+      },
+    ],
+    []
+  );
 
   const fetchData = async () => {
     try {
@@ -110,21 +125,17 @@ const PAGE_SIZE = 50;
 
       const fetchedData = await response.json();
 
-    const sortedData = fetchedData.sort((a, b) =>{
-        if(a.scanned_at !==b.scanned_at){
+      const sortedData = fetchedData.sort((a, b) => {
+        if (a.scanned_at !== b.scanned_at) {
           return new Date(b.scanned_at) - new Date(a.scanned_at);
+        } else {
+          return a.userName.localeCompare(b.userName);
         }
-        else{
-            return a.userName.localeCompare(b.userName);
-        }
-    }
-      
-    );
+      });
 
-   
-    setFullData(sortedData);
-    setVisibleData(sortedData.slice(0, PAGE_SIZE));
-    setIsLoadingStats(false);
+      setFullData(sortedData);
+      setVisibleData(sortedData.slice(0, PAGE_SIZE));
+      setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -142,37 +153,70 @@ const PAGE_SIZE = 50;
       return columnIds.some((columnId) => {
         const rowValue = row.values[columnId];
         if (rowValue) {
-          const formattedDate = new Date(rowValue).toLocaleDateString('en-US');
+          const formattedDate = new Date(rowValue).toLocaleDateString("en-US");
           return formattedDate.includes(filterValue);
         }
         return false;
       });
     });
   };
+    const handleScroll = () => {
+        const element = tableRef.current;
+        // Check if the scroll position is near the bottom
+        if ((element.scrollHeight - element.scrollTop).toFixed(0)-5 < element.clientHeight && hasMore) {
+            fetchMoreData();
+        }
+    };
 
+    useEffect(() => {
+        const element = tableRef.current;
+
+        if (element) {
+
+            element.addEventListener('scroll', handleScroll);
+
+            return () => {
+                element.removeEventListener('scroll', handleScroll);
+            };
+        }
+    }, ); // Add dependencies as needed
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
     rows,
-    state: { globalFilter},
+    state: { globalFilter },
     setGlobalFilter,
-   
   } = useTable(
-    { columns, data: visibleData,
-    filterTypes: {
-      datetime: filterByDates,
-    },},
+    {
+      columns,
+      data: visibleData,
+      filterTypes: {
+        datetime: filterByDates,
+      },
+    },
     useGlobalFilter,
-    useSortBy,
+    useSortBy
   );
-  
+
+  const scrollToTop = () => {
+      const element = tableRef.current
+      if (element) {
+          element.scrollTo({
+              top: 0,
+              behavior: "smooth",
+          });
+      }
+  };
   const scrollToBottom = () => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth', 
-    });
+      const element = tableRef.current
+      if (element) {
+          element.scrollTo({
+              top: element.scrollHeight,
+              behavior: "smooth",
+          });
+      }
   };
 
   return (
@@ -193,24 +237,24 @@ const PAGE_SIZE = 50;
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
-            
             <h1 className="custom-heading">Digitized Books Stats</h1>
-              
-            </div>
-          
-      <div className="flex justify-end mb-4 text-sky-800 mr-8">
-      <Globalfilter filter = {globalFilter} setFilter={setGlobalFilter} className="mr-8"/> 
-  
-      </div>
+          </div>
+
+          <div className="flex justify-end mb-4 text-sky-800 mr-8">
+            <Globalfilter
+              filter={globalFilter}
+              setFilter={setGlobalFilter}
+              className="mr-8"
+            />
+          </div>
           <div className="table-container relative">
-            <div className="m-6 p-4  overflow-x-auto">
-            
+            <div ref={tableRef} className=" overflow-x-auto max-h-[65vh]">
               <table
                 {...getTableProps()}
                 className=" divide-y divide-gray-200 table"
-                style={{ Width: "100%", tableLayout: "fixed"  }}
+                style={{ width: "90%", tableLayout: "fixed" }}
               >
-                <thead>
+                <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (
                     <tr key={index} {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column, index) => (
@@ -219,7 +263,7 @@ const PAGE_SIZE = 50;
                           {...column.getHeaderProps(
                             column.getSortByToggleProps()
                           )}
-                          className="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl"
+                          className="px-4 py-2 text-sm sm:text-base "
                         >
                           {column.render("Header")}
                           {column.isSorted && (
@@ -251,20 +295,24 @@ const PAGE_SIZE = 50;
                   })}
                 </tbody>
               </table>
-              
-             
+
             </div>
-              <button  onClick={scrollToBottom} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
-              <Image src="/scroll-down.png" alt="Scrolldown" width={20} height={20} />
-              </button>
-              <InfiniteScroll
-              dataLength={visibleData.length}
-              next={fetchMoreData}
-              hasMore={hasMore}
-              loader={<h4 className="text-sky-800">Loading...</h4>}
-              style={{ overflow: "hidden" }} 
-            />
-            </div>
+            <button
+              onClick={scrollToTop}
+              className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-20 right-2"
+            >
+                <BiChevronUp className={"h-5 w-5"}/>
+
+            </button>
+              <button
+              onClick={scrollToBottom}
+              className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2"
+            >
+                <BiChevronDown className={"h-5 w-5"}/>
+
+            </button>
+
+          </div>
         </>
       )}
     </>

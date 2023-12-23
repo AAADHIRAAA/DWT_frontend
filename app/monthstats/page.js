@@ -5,25 +5,41 @@ import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
+import MonthSelection from "../components/monthdropdown";
+import DialogBox from "../components/holidaymonthstats";
+import {ScrollArea} from "@/app/components/ui/scroll-area";
 
 const LeaderBoardMonth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const { user } = useUser();
+
+  const [editableCell, setEditableCell] = useState(null);
+
+  const handleCellEdit = (rowIndex, columnId) => {
+    setEditableCell({ rowIndex, columnId });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    const updatedRowData = [...rowData];
+    updatedRowData[editableCell.rowIndex][editableCell.columnId] = value;
+    localStorage.setItem("rowData", JSON.stringify(updatedRowData));
+    setRowData(updatedRowData);
+    console.log(updatedRowData);
+  };
+
+
+
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
       setIsAdmin(userRole === "admin");
     }
   }, [user]);
-  useEffect(() => {
-    fetchData();
-    const intervalId = setInterval(fetchData, 60 * 1000);
 
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
 
   const columns = useMemo(
     () => [
@@ -34,6 +50,7 @@ const LeaderBoardMonth = () => {
       {
         Header: "Scan Agent",
         accessor: "username",
+        sortType: "alphanumeric",
       },
       {
         Header: "Total Books#",
@@ -43,6 +60,28 @@ const LeaderBoardMonth = () => {
         Header: "Total Pages#",
         accessor: "totalPages",
       },
+      {
+        Header: "Total Wdays",
+        accessor: "totalWorkingDays",
+      },
+      {
+        Header: "Total Whrs",
+        accessor: "workinghrs",
+      },
+
+      {
+        Header: "Total days",
+        accessor: "totalDays",
+      },
+      {
+        Header: "Leaves taken",
+        accessor: "leaves",
+      },
+
+      {
+        Header: "Payment",
+        accessor: "payment",
+      },
     ],
     []
   );
@@ -50,39 +89,63 @@ const LeaderBoardMonth = () => {
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
-
+      console.log(selectedMonth);
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month"
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json();
-      setRowData(data);
       
+      const fetchedData = await response.json();
+
+      // Sort the fetched data by the "userName" column in ascending order
+      const sortedData = fetchedData.sort((a, b) =>
+        a.username.localeCompare(b.username)
+      );
+      setRowData(sortedData);
+
+      // Merge the existing rowData with the newData fetched from the API
+      // const updatedRowData = [...rowData, ...newData];
+      // setRowData(updatedRowData);
+
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   };
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    nextPage,
-    previousPage,
-    canNextPage,
-    canPreviousPage,
-    state: { pageIndex },
-    pageCount,
-    gotoPage,
-  } = useTable({ columns, data: rowData }, useSortBy, usePagination);
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
+    useTable({ columns, data: rowData }, useSortBy);
 
- 
+  const handleSave = async (rowData) => {
+    try {
+      const response = await fetch(
+        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ rowData }),
+        }
+      );
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+      // Handle success
+      console.log("Data saved successfully!");
+    } catch (error) {
+      console.error("Error saving data:", error.message);
+    }
+  };
+  useEffect( () => {
+     fetchData().then();
+
+  }, [selectedMonth])
 
   return (
     <>
@@ -102,15 +165,27 @@ const LeaderBoardMonth = () => {
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
-            <h1 className="custom-heading">Month Stats</h1>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "30px",
+              }}
+            >
+              <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
+              <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <DialogBox selectedMonth={selectedMonth}/>
+            </div>
 
-            <div className=" overflow-x-auto">
+            <ScrollArea className=" h-[70vh]  ">
               <table
                 {...getTableProps()}
                 className="min-w-full divide-y divide-gray-200"
                 style={{ minWidth: "60%" }}
               >
-                <thead>
+                <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (
                     <tr key={index} {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column, index) => (
@@ -130,14 +205,14 @@ const LeaderBoardMonth = () => {
                   ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {page.map((row, index) => {
+                  {rows.map((row, index) => {
                     prepareRow(row);
                     return (
                       <tr key={index} {...row.getRowProps()}>
-                        {row.cells.map((cell, index) => {
+                        {row.cells.map((cell, cellIndex) => {
                           return (
                             <td
-                              key={index}
+                              key={cellIndex}
                               {...cell.getCellProps()}
                               className="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl"
                             >
@@ -150,31 +225,7 @@ const LeaderBoardMonth = () => {
                   })}
                 </tbody>
               </table>
-            </div>
-            <div className="btn-container">
-              <button disabled={pageIndex === 0} onClick={() => gotoPage(0)}>
-                First
-              </button>
-
-              <button disabled={!canPreviousPage} onClick={previousPage}>
-                Prev
-              </button>
-
-              <span>
-                {pageIndex + 1}_of_{pageCount}
-              </span>
-
-              <button disabled={!canNextPage} onClick={nextPage}>
-                Next
-              </button>
-
-              <button
-                disabled={pageIndex >= pageCount - 1}
-                onClick={() => gotoPage(pageCount - 1)}
-              >
-                Last
-              </button>
-            </div>
+            </ScrollArea>
           </div>
         </>
       )}
