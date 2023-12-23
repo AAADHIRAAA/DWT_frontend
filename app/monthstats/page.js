@@ -91,7 +91,7 @@ const LeaderBoardMonth = () => {
       setIsLoadingStats(true);
       console.log(selectedMonth);
       const response = await fetch(
-        `http://localhost:5200/api/v1/admin/leaderboard-month/${selectedMonth}`
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -122,7 +122,7 @@ const LeaderBoardMonth = () => {
   const handleSave = async (rowData) => {
     try {
       const response = await fetch(
-        "http://localhost:5200/api/v1/admin/payment",
+        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
         {
           method: "POST",
           headers: {

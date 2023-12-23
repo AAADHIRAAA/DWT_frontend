@@ -29,7 +29,7 @@ const DialogBox = ({selectedMonth}) => {
     };
 
     const getHolidays = async () => {
-        const response = await fetch("http://localhost:5200/api/v1/admin/monthlyholidays/" + selectedMonth)
+        const response = await fetch("https://digitized-work-tracker-backend.vercel.app/api/v1/admin/monthlyholidays/" + selectedMonth)
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -65,7 +65,7 @@ const DialogBox = ({selectedMonth}) => {
             };
 
 
-            const response = await fetch("http://localhost:5200/api/v1/admin/month", {
+            const response = await fetch("https://digitized-work-tracker-backend.vercel.app/api/v1/admin/month", {
                 method: "POST", headers: {
                     "Content-Type": "application/json",
                 }, body: JSON.stringify(data),
