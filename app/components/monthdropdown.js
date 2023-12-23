@@ -2,25 +2,13 @@
 "use client"
 import { useState,useEffect } from 'react';
 
-
-const MonthSelection = () => {
-  const [selectedMonth, setSelectedMonth] = useState('');
+const MonthSelection = ({selectedMonth, setSelectedMonth}) => {
 
  
   const handleSelectionChange = (event) => {
     const newSelectedMonth = event.target.value;
     setSelectedMonth(newSelectedMonth);
-    localStorage.setItem('selectedMonth', newSelectedMonth);
   };
-console.log(selectedMonth);
-  useEffect(() => {
-    // Retrieve the selected scribe number from localStorage on component mount
-    const storedMonth = localStorage.getItem('selectedMonth');
-    if (storedMonth) {
-      setSelectedMonth(storedMonth);
-    }
-   
-  }, []);
   
 
   return (

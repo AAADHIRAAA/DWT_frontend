@@ -7,12 +7,13 @@ import Link from "next/link";
 import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
 import DialogBox from "../components/holidaymonthstats";
+import {ScrollArea} from "@/app/components/ui/scroll-area";
 
 const LeaderBoardMonth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const { user } = useUser();
 
   const [editableCell, setEditableCell] = useState(null);
@@ -25,35 +26,19 @@ const LeaderBoardMonth = () => {
     const { name, value } = e.target;
     const updatedRowData = [...rowData];
     updatedRowData[editableCell.rowIndex][editableCell.columnId] = value;
-    localStorage.setItem('rowData', JSON.stringify(updatedRowData));
+    localStorage.setItem("rowData", JSON.stringify(updatedRowData));
     setRowData(updatedRowData);
     console.log(updatedRowData);
   };
 
-  const getMonth = () => {
-    const storedMonth = localStorage.getItem("selectedMonth");
-      setSelectedMonth(storedMonth);
-      if(!storedMonth){
-        const currentDate = new Date();
-        const month = currentDate.getMonth() + 1;
-        setSelectedMonth(month);
-      }
-    
-  };
-  
+
+
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
       setIsAdmin(userRole === "admin");
     }
   }, [user]);
-  useEffect(() => {
-    getMonth();
-    fetchData();
-    const intervalId = setInterval(fetchData,  60 * 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
 
 
   const columns = useMemo(
@@ -65,7 +50,7 @@ const LeaderBoardMonth = () => {
       {
         Header: "Scan Agent",
         accessor: "username",
-        sortType: 'alphanumeric', 
+        sortType: "alphanumeric",
       },
       {
         Header: "Total Books#",
@@ -79,7 +64,7 @@ const LeaderBoardMonth = () => {
         Header: "Total Wday",
         accessor: "weekdays",
       },
-     
+
       {
         Header: "Total days",
         accessor: "totaldays",
@@ -88,13 +73,11 @@ const LeaderBoardMonth = () => {
         Header: "Leaves taken",
         accessor: "leaves",
       },
-    
+
       {
         Header: "Payment",
         accessor: "payment",
       },
-    
-      
     ],
     []
   );
@@ -102,9 +85,9 @@ const LeaderBoardMonth = () => {
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
-     console.log(selectedMonth);
+      console.log(selectedMonth);
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
+        `http://localhost:5200/api/v1/admin/leaderboard-month/${selectedMonth}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -119,49 +102,47 @@ const LeaderBoardMonth = () => {
         a.username.localeCompare(b.username)
       );
       setRowData(sortedData);
-    
-    // Merge the existing rowData with the newData fetched from the API
-    // const updatedRowData = [...rowData, ...newData];
-    // setRowData(updatedRowData);
-     
+
+      // Merge the existing rowData with the newData fetched from the API
+      // const updatedRowData = [...rowData, ...newData];
+      // setRowData(updatedRowData);
+
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   };
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    rows,
-   
-   
-  } = useTable({ columns, data: rowData }, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
+    useTable({ columns, data: rowData }, useSortBy);
 
   const handleSave = async (rowData) => {
     try {
-    
-      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ rowData }), 
-      });
+      const response = await fetch(
+        "http://localhost:5200/api/v1/admin/payment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ rowData }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       // Handle success
-      console.log('Data saved successfully!');
+      console.log("Data saved successfully!");
     } catch (error) {
-      console.error('Error saving data:', error.message);
+      console.error("Error saving data:", error.message);
     }
   };
-  
+  useEffect( () => {
+     fetchData().then();
+
+  }, [selectedMonth])
 
   return (
     <>
@@ -181,21 +162,27 @@ const LeaderBoardMonth = () => {
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
-          
-            <div style={{ display: "flex", flexDirection:"row",alignItems: "center",justifyContent:"center",gap:"30px"}}>
-            <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
-              <MonthSelection />
-             <DialogBox />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "30px",
+              }}
+            >
+              <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
+              <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <DialogBox selectedMonth={selectedMonth}/>
             </div>
-           
-           
-            <div className=" overflow-x-auto">
+
+            <ScrollArea className=" h-[70vh]  ">
               <table
                 {...getTableProps()}
                 className="min-w-full divide-y divide-gray-200"
                 style={{ minWidth: "60%" }}
               >
-                <thead>
+                <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (
                     <tr key={index} {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column, index) => (
@@ -220,7 +207,6 @@ const LeaderBoardMonth = () => {
                     return (
                       <tr key={index} {...row.getRowProps()}>
                         {row.cells.map((cell, cellIndex) => {
-                          
                           return (
                             <td
                               key={cellIndex}
@@ -230,15 +216,13 @@ const LeaderBoardMonth = () => {
                               {cell.render("Cell")}
                             </td>
                           );
-                          }
-                        )}
+                        })}
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-            </div>
-          
+            </ScrollArea>
           </div>
         </>
       )}

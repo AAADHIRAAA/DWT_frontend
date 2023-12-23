@@ -54,7 +54,7 @@ const Header = () => {
     } else {
       try {
         const response = await fetch(
-          "https://digitized-work-tracker-backend.vercel.app/api/v1/users/issue",
+          "http://localhost:5200/api/v1/users/issue",
           {
             method: "POST",
             headers: {
@@ -86,20 +86,13 @@ const Header = () => {
     }
   };
 
- 
   const storeFirstLoginTime = async () => {
     try {
-     
-      await axios.post(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/users/login",
-        {
-          userId: user.id,
-          userName: user.fullName,
-          scannerNumber: selectedScribe,
-       
-        }
-      );
-  
+      await axios.post("http://localhost:5200/api/v1/users/login", {
+        userId: user.id,
+        userName: user.fullName,
+        scannerNumber: selectedScribe,
+      });
     } catch (error) {
       console.error("Error storing first login time:", error);
     }
@@ -147,7 +140,6 @@ const Header = () => {
         <>
           {!user && (
             <>
-         
               <button className={"bg-sky-800 text-white p-3 rounded-2xl"}>
                 <SignInButton />
               </button>

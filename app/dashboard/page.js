@@ -15,7 +15,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/books/statistics-for-date"
+        "http://localhost:5200/api/v1/books/statistics-for-date"
       );
       const data = await response.json();
 
