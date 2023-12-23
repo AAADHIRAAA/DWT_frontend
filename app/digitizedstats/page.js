@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, {useState, useEffect, useMemo, useRef} from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import {
   useTable,
@@ -13,7 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globalfilter } from "../components/Globalfilter";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {BiChevronUp} from "react-icons/bi";
+import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 
 const SpreadsheetMonth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -25,6 +25,7 @@ const SpreadsheetMonth = () => {
   const [isLoading, setIsLoading] = useState(false); // Loading indicator
   const [hasMore, setHasMore] = useState(true); // Whether more data is available
   const PAGE_SIZE = 50;
+  const tableRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -39,6 +40,7 @@ const SpreadsheetMonth = () => {
 
     return () => clearInterval(intervalId);
   }, []);
+
 
   const columns = useMemo(
     () => [
@@ -158,7 +160,26 @@ const SpreadsheetMonth = () => {
       });
     });
   };
+    const handleScroll = () => {
+        const element = tableRef.current;
+        // Check if the scroll position is near the bottom
+        if ((element.scrollHeight - element.scrollTop).toFixed(0)-5 < element.clientHeight && hasMore) {
+            fetchMoreData();
+        }
+    };
 
+    useEffect(() => {
+        const element = tableRef.current;
+
+        if (element) {
+
+            element.addEventListener('scroll', handleScroll);
+
+            return () => {
+                element.removeEventListener('scroll', handleScroll);
+            };
+        }
+    }, ); // Add dependencies as needed
   const {
     getTableProps,
     getTableBodyProps,
@@ -180,10 +201,22 @@ const SpreadsheetMonth = () => {
   );
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+      const element = tableRef.current
+      if (element) {
+          element.scrollTo({
+              top: 0,
+              behavior: "smooth",
+          });
+      }
+  };
+  const scrollToBottom = () => {
+      const element = tableRef.current
+      if (element) {
+          element.scrollTo({
+              top: element.scrollHeight,
+              behavior: "smooth",
+          });
+      }
   };
 
   return (
@@ -215,13 +248,13 @@ const SpreadsheetMonth = () => {
             />
           </div>
           <div className="table-container relative">
-            <div className="m-6 p-4  overflow-x-auto">
+            <div ref={tableRef} className=" overflow-x-auto max-h-[65vh]">
               <table
                 {...getTableProps()}
                 className=" divide-y divide-gray-200 table"
                 style={{ width: "90%", tableLayout: "fixed" }}
               >
-                <thead>
+                <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (
                     <tr key={index} {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column, index) => (
@@ -262,21 +295,23 @@ const SpreadsheetMonth = () => {
                   })}
                 </tbody>
               </table>
+
             </div>
             <button
               onClick={scrollToTop}
-              className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2"
+              className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-20 right-2"
             >
                 <BiChevronUp className={"h-5 w-5"}/>
 
             </button>
-            <InfiniteScroll
-              dataLength={visibleData.length}
-              next={fetchMoreData}
-              hasMore={hasMore}
-              loader={<h4 className="text-sky-800">Loading...</h4>}
-              style={{ overflow: "hidden" }}
-            />
+              <button
+              onClick={scrollToBottom}
+              className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2"
+            >
+                <BiChevronDown className={"h-5 w-5"}/>
+
+            </button>
+
           </div>
         </>
       )}
