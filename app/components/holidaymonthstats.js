@@ -82,7 +82,7 @@ const DialogBox = ({selectedMonth}) => {
     };
     useEffect(() => {
         getHolidays().then();
-    }, [selectedMonth])
+    }, [selectedMonth, isOpen])
 //   return (
 //     <Dialog>
 //       <DialogTrigger onClick={openDialog} className="text-sky-600">
