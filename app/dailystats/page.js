@@ -132,7 +132,7 @@ const PAGE_SIZE = 50;
     prepareRow,
    
   } = useTable(
-    { columns, data: visibleData, initialState: { pageSize: 50 } },
+    { columns, data: visibleData },
     useSortBy,
 
   );

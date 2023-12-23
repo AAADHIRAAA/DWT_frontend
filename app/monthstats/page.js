@@ -76,8 +76,12 @@ const LeaderBoardMonth = () => {
         accessor: "totalPages",
       },
       {
-        Header: "Total Wday",
-        accessor: "weekdays",
+        Header: "Total Wdays",
+        accessor: "workingdays",
+      },
+      {
+        Header: "Total Whrs",
+        accessor: "workinghrs",
       },
      
       {
@@ -110,8 +114,7 @@ const LeaderBoardMonth = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // const data = await response.json();
-      // setRowData(data);
+      
       const fetchedData = await response.json();
 
       // Sort the fetched data by the "userName" column in ascending order
@@ -120,10 +123,6 @@ const LeaderBoardMonth = () => {
       );
       setRowData(sortedData);
     
-    // Merge the existing rowData with the newData fetched from the API
-    // const updatedRowData = [...rowData, ...newData];
-    // setRowData(updatedRowData);
-     
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -140,27 +139,27 @@ const LeaderBoardMonth = () => {
    
   } = useTable({ columns, data: rowData }, useSortBy);
 
-  const handleSave = async (rowData) => {
-    try {
+  // const handleSave = async (rowData) => {
+  //   try {
     
-      const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ rowData }), 
-      });
+  //     const response = await fetch('https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ rowData }), 
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
 
-      // Handle success
-      console.log('Data saved successfully!');
-    } catch (error) {
-      console.error('Error saving data:', error.message);
-    }
-  };
+  //     // Handle success
+  //     console.log('Data saved successfully!');
+  //   } catch (error) {
+  //     console.error('Error saving data:', error.message);
+  //   }
+  // };
   
 
   return (
