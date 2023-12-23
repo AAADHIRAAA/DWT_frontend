@@ -62,7 +62,7 @@ const LeaderBoardMonth = () => {
       },
       {
         Header: "Total Wdays",
-        accessor: "workingdays",
+        accessor: "totalWorkingDays",
       },
       {
         Header: "Total Whrs",
@@ -71,7 +71,7 @@ const LeaderBoardMonth = () => {
 
       {
         Header: "Total days",
-        accessor: "totaldays",
+        accessor: "totalDays",
       },
       {
         Header: "Leaves taken",

@@ -143,7 +143,7 @@ const DialogBox = ({selectedMonth}) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
-        <DialogTrigger>
+        <DialogTrigger className="text-sky-600">
             Current Month : {selectedMonth}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white">
