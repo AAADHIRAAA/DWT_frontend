@@ -42,55 +42,72 @@ const PAGE_SIZE = 50;
       {
         Header: "S.No",
         accessor: (row, index) => index + 1, 
+       
       },
       {
         Header: "Scan Agent",
         accessor: "userName",
+       
       },
       {
         Header: "Scanner#",
         accessor: "scribe_number",
+       
       },
       {
         Header: "Title",
         accessor: "title",
+       
+     
       },
       {
         Header: "Scan Date",
         accessor: "scanned_at",
+       
       },
      {
        Header: '#Pages',
        accessor: 'pages_scanned',
+      
      },
      {
       Header: 'Identifier',
       accessor: 'ID_url',
       Cell: ({ row }) => (
-        <a href={row.original.ID_url} target="_blank" rel="noopener noreferrer" >
+        <a href={row.original.ID_url} 
+        target="_blank"
+         rel="noopener noreferrer"
+         style={{ display: 'block', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          >
           {row.original.ID_url.split('details/')[1]}
         </a>
       ),
+     
     },
     {
       Header: 'Author',
       accessor: 'author_name',
+  
     },
     {
       Header: 'Publisher',
       accessor: 'publisher_name',
+    
     },
     {
       Header: 'Year',
       accessor: 'year',
+     
     },
     {
       Header: 'ISBN',
       accessor: 'isbn',
+     
     },
     {
       Header:'Language',
       accessor:'language',
+     
     }
      
   ],
@@ -168,9 +185,9 @@ const PAGE_SIZE = 50;
     useSortBy,
   );
   
-  const scrollToBottom = () => {
+  const scrollToTop = () => {
     window.scrollTo({
-      top: document.body.scrollHeight,
+      top: 0,
       behavior: 'smooth', 
     });
   };
@@ -208,7 +225,7 @@ const PAGE_SIZE = 50;
               <table
                 {...getTableProps()}
                 className=" divide-y divide-gray-200 table"
-                style={{ Width: "100%", tableLayout: "fixed"  }}
+                style={{ width: "90%", tableLayout: "fixed"  }}
               >
                 <thead>
                   {headerGroups.map((headerGroup, index) => (
@@ -219,7 +236,8 @@ const PAGE_SIZE = 50;
                           {...column.getHeaderProps(
                             column.getSortByToggleProps()
                           )}
-                          className="px-4 py-2 text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl"
+                          className="px-4 py-2 text-sm sm:text-base "
+                       
                         >
                           {column.render("Header")}
                           {column.isSorted && (
@@ -254,7 +272,7 @@ const PAGE_SIZE = 50;
               
              
             </div>
-              <button  onClick={scrollToBottom} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
+              <button  onClick={scrollToTop} className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-1 rounded fixed bottom-10 right-2">
               <Image src="/scroll-down.png" alt="Scrolldown" width={20} height={20} />
               </button>
               <InfiniteScroll
