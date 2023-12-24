@@ -8,6 +8,7 @@ import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
 import DialogBox from "../components/holidaymonthstats";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
+import {clearInterval} from "timers";
 
 const LeaderBoardMonth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -64,10 +65,10 @@ const LeaderBoardMonth = () => {
         Header: "Total Wdays",
         accessor: "totalWorkingDays",
       },
-      {
-        Header: "Total Whrs",
-        accessor: "workinghrs",
-      },
+      // {
+      //   Header: "Total Whrs",
+      //   accessor: "workinghrs",
+      // },
 
       {
         Header: "Total days",
@@ -119,29 +120,7 @@ const LeaderBoardMonth = () => {
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable({ columns, data: rowData }, useSortBy);
 
-  const handleSave = async (rowData) => {
-    try {
-      const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rowData }),
-        }
-      );
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-      // Handle success
-      console.log("Data saved successfully!");
-    } catch (error) {
-      console.error("Error saving data:", error.message);
-    }
-  };
   useEffect( () => {
      fetchData().then();
 

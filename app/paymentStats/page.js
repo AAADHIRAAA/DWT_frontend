@@ -6,8 +6,9 @@ import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
-import DialogBox from "../components/holidaymonthstats";
+import DialogBox from "../components/Payment";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
+import {clearInterval} from "timers";
 
 const PaymentStats = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -60,10 +61,37 @@ const PaymentStats = () => {
       {
         Header: "Status",
         accessor: "status",
+
       },
       {
         Header: "Action",
         accessor: "action",
+        Cell: ({row}) => {
+          const {username, payment, totalWorkingDays, leaves,status} = row.original;
+          const action = status === "paid" ? "View" : "PayNow";
+
+          const handleButtonClick = () => {
+            if (status === "Not Paid") {
+              console.log("Pay Now action triggered");
+              // Implement Pay Now action
+            } else {
+              console.log("View action triggered");
+              // Implement View action
+            }
+          };
+
+          return (
+              <DialogBox
+                  action={action}
+                  username={username}
+                  payment={payment}
+                  totalWorkingDays={totalWorkingDays}
+                  leaves={leaves}
+                  status={status}
+
+              />
+          );
+        },
       },
     ],
     []
@@ -83,8 +111,13 @@ const PaymentStats = () => {
       
       const fetchedData = await response.json();
 
-      const sortedData = fetchedData.sort((a, b) =>
-        a.username.localeCompare(b.username)
+      const modifiedData = fetchedData.map((dataItem) => ({
+        ...dataItem,
+        status: "Not Paid", // Set default status here
+      }));
+
+      const sortedData = modifiedData.sort((a, b) =>
+          a.username.localeCompare(b.username)
       );
       setRowData(sortedData);
 
@@ -98,25 +131,8 @@ const PaymentStats = () => {
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable({ columns, data: rowData }, useSortBy);
 
-  const handleSave = async (rowData) => {
-    try {
-      const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rowData }),
-        }
-      );
 
- 
-      console.log("Data saved successfully!");
-    } catch (error) {
-      console.error("Error saving data:", error.message);
-    }
-  };
+
   useEffect( () => {
      fetchData().then();
 
