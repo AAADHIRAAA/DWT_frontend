@@ -28,10 +28,12 @@ const DialogBox = ({
 
     const handleBonusChange = (e) => {
         setBonus(Number(e.target.value));
+        setSalary(salary+bonus)
 
     };
     const handleDetectChange = (e) => {
         setDetect(Number(e.target.value));
+        setSalary(salary-detect);
 
     };
 
@@ -73,7 +75,7 @@ const DialogBox = ({
                 leaves:leaves,
                 totalDays:totalWorkingDays,
                 status:{paid},
-                payment:{payment},
+                payment:{salary},
                 date:{paidDate}
             };
             const response = await fetch(
@@ -87,7 +89,7 @@ const DialogBox = ({
                 }
             );
 
-
+            updateStatus();
             console.log("Data saved successfully!");
         } catch (error) {
             console.error("Error saving data:", error.message);
@@ -113,7 +115,7 @@ const DialogBox = ({
                     <div className="grid grid-cols-1 items-center gap-4">
 
                         <p>Scan Agent: {username}</p>
-                        <p>Payment: {calculateUpdatedPayment()}</p>
+                        <p>Payment: {salary}</p>
                         <p>Total Working Days: {totalWorkingDays}</p>
                         <p>Leaves Taken: {leaves}</p>
                         <p>Status: {paid}</p>
@@ -127,7 +129,7 @@ const DialogBox = ({
                           Process payment
 
                         </span>
-                          Payment: {calculateUpdatedPayment()}
+                          Payment: {salary}
 
                                 </div>
                                 <div className="flex flex-col gap-5 justify-center align-center">
@@ -198,7 +200,7 @@ const DialogBox = ({
                                     <button
                                         type="button"
                                         className="border border-gray-300 bg-sky-800 hover:bg-sky-600 text-white rounded-md px-2 py-2 w-30 "
-                                        onClick={updateStatus}
+                                        onClick={savePayment}
                                     >
                                         Proceed to Pay
                                     </button>

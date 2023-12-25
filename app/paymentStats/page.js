@@ -134,9 +134,10 @@ const PaymentStats = () => {
 
 
   useEffect( () => {
-     fetchData().then();
-
-  }, [selectedMonth])
+     fetchData().then(()=>{
+       setInterval(function(){}, 2000);
+     });
+  }, )
 
   return (
     <>
