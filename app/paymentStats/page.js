@@ -71,11 +71,14 @@ const PaymentStats = () => {
           const action = status === "paid" ? "View" : "PayNow";
 
           const handleButtonClick = () => {
+            fetchData();
             if (status === "Not Paid") {
               console.log("Pay Now action triggered");
+
               // Implement Pay Now action
             } else {
               console.log("View action triggered");
+
               // Implement View action
             }
           };
@@ -88,7 +91,7 @@ const PaymentStats = () => {
                   totalWorkingDays={totalWorkingDays}
                   leaves={leaves}
                   status={status}
-
+                  handleButtonClick={handleButtonClick}
               />
           );
         },
@@ -100,7 +103,7 @@ const PaymentStats = () => {
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
-      console.log(selectedMonth);
+      console.log("Fetch data call")
       const response = await fetch(
         `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
       );
@@ -133,11 +136,11 @@ const PaymentStats = () => {
 
 
 
-  useEffect( () => {
-     fetchData().then(()=>{
-       setInterval(function(){}, 2000);
-     });
-  }, )
+  useEffect(   () => {
+
+       fetchData();
+
+  }, [])
 
   return (
     <>

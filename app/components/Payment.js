@@ -1,11 +1,8 @@
-import React, {useState, useEffect, useRef} from "react";
-import DatePicker from "react-datepicker";
+import React, {useState} from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from "@/app/components/ui/dialog"
-import {ScrollArea, ScrollBar} from "@/app/components/ui/scroll-area";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/app/components/ui/dialog"
 import {Minus} from "lucide-react";
+import {isNumber} from "util";
 
 const DialogBox = ({
                        action,
@@ -14,7 +11,7 @@ const DialogBox = ({
                        totalWorkingDays,
                        leaves,
                         status,
-
+                        handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -23,28 +20,32 @@ const DialogBox = ({
     const [isBonusFieldVisible, setIsBonusFieldVisible] = useState(false);
     const [isDetectFieldVisible, setIsDetectFieldVisible] = useState(false);
     const [paid, setPaid]=useState(status);
-    const [salary, setSalary]= useState(payment);
     const [ paidDate, setPaidDate] = useState(null);
 
     const handleBonusChange = (e) => {
-        setBonus(Number(e.target.value));
-        setSalary(salary+bonus)
-
+        if (!isNaN(Number(e))) {
+            setBonus(Number(e));
+            calculateUpdatedPayment();
+        }
     };
     const handleDetectChange = (e) => {
-        setDetect(Number(e.target.value));
-        setSalary(salary-detect);
+        if (!isNaN(Number(e))) {
+            setDetect(Number(e));
+            calculateUpdatedPayment();
+        }
 
     };
 
     const removeBonus = () => {
         setBonus(0);
         setIsBonusFieldVisible(false);
+        calculateUpdatedPayment();
 
     };
     const removeDetect = () => {
         setDetect(0);
         setIsDetectFieldVisible(false);
+        calculateUpdatedPayment();
 
     };
     const detectSalary = () => {
@@ -57,8 +58,7 @@ const DialogBox = ({
 
     const calculateUpdatedPayment = () => {
 
-        const updatedPayment = payment + bonus - detect;
-        return updatedPayment;
+        return (payment + bonus - detect);
     };
 
     const updateStatus =()=>{
@@ -67,17 +67,23 @@ const DialogBox = ({
         setPaidDate(currentDate);
 
     }
+    const addBonus = () =>{
+        setIsBonusFieldVisible(!isBonusFieldVisible);
+
+    }
 
     const savePayment = async () => {
+
+        const salary = calculateUpdatedPayment();
         try {
             const data = {
                username:username,
                 leaves:leaves,
                 totalDays:totalWorkingDays,
-                status:{paid},
-                payment:{salary},
-                date:{paidDate}
+                status:paid,
+                payment:salary
             };
+            console.log(data)
             const response = await fetch(
                 "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
                 {
@@ -88,18 +94,15 @@ const DialogBox = ({
                     body: JSON.stringify({ data }),
                 }
             );
-
             updateStatus();
+            handleButtonClick();
             console.log("Data saved successfully!");
         } catch (error) {
             console.error("Error saving data:", error.message);
         }
     };
 
-    const addBonus = () =>{
-        setIsBonusFieldVisible(!isBonusFieldVisible);
 
-    }
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
@@ -115,7 +118,7 @@ const DialogBox = ({
                     <div className="grid grid-cols-1 items-center gap-4">
 
                         <p>Scan Agent: {username}</p>
-                        <p>Payment: {salary}</p>
+                        <p>Payment: {calculateUpdatedPayment()}</p>
                         <p>Total Working Days: {totalWorkingDays}</p>
                         <p>Leaves Taken: {leaves}</p>
                         <p>Status: {paid}</p>
@@ -129,7 +132,7 @@ const DialogBox = ({
                           Process payment
 
                         </span>
-                          Payment: {salary}
+                          Payment: {calculateUpdatedPayment()}
 
                                 </div>
                                 <div className="flex flex-col gap-5 justify-center align-center">
@@ -150,9 +153,10 @@ const DialogBox = ({
                                                     <div className="grid grid-cols-3">
                                                         <label>Bonus: </label>
                                                         <input
+                                                            autoFocus
                                                             className="border border-gray-300 rounded-md p-1 col-span-2"
                                                             value={bonus}
-                                                            onChange={handleBonusChange}
+                                                            onChange={(e)=> handleBonusChange(e.target.value)}
                                                         ></input>
                                                     </div>
                                                 </div>
@@ -182,9 +186,10 @@ const DialogBox = ({
                                                         <div className="grid grid-cols-3">
                                                             <label>Detect: </label>
                                                             <input
+                                                                autoFocus
                                                                 className="border border-gray-300 rounded-md p-1 col-span-2"
                                                                 value={detect}
-                                                                onChange={handleDetectChange}
+                                                                onChange={(e)=>handleDetectChange(e.target.value)}
                                                             ></input>
                                                         </div>
                                                     </div>
