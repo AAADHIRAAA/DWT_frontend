@@ -6,6 +6,7 @@ import {isNumber} from "util";
 
 const DialogBox = ({
                        action,
+                       userId,
                        username,
                        payment,
                        totalWorkingDays,
@@ -65,6 +66,7 @@ const DialogBox = ({
         setPaid("Paid");
         const currentDate = new Date().toLocaleDateString("en-US");
         setPaidDate(currentDate);
+        savePayment();
 
     }
     const addBonus = () =>{
@@ -77,11 +79,11 @@ const DialogBox = ({
         const salary = calculateUpdatedPayment();
         try {
             const data = {
+                userId:userId,
                username:username,
                 leaves:leaves,
                 totalDays:totalWorkingDays,
-                status:paid,
-                payment:salary
+                payment:salary,
             };
             console.log(data)
             const response = await fetch(
@@ -94,7 +96,7 @@ const DialogBox = ({
                     body: JSON.stringify({ data }),
                 }
             );
-            updateStatus();
+            console.log(response);
             handleButtonClick();
             console.log("Data saved successfully!");
         } catch (error) {
@@ -107,7 +109,8 @@ const DialogBox = ({
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
             <DialogTrigger className="text-sky-600">
-                {action}
+                <button className={"bg-sky-800 rounded-md text-white p-2 hover:bg-sky-600"}>{action}</button>
+
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white">
                 <DialogHeader>
@@ -205,7 +208,7 @@ const DialogBox = ({
                                     <button
                                         type="button"
                                         className="border border-gray-300 bg-sky-800 hover:bg-sky-600 text-white rounded-md px-2 py-2 w-30 "
-                                        onClick={savePayment}
+                                        onClick={updateStatus}
                                     >
                                         Proceed to Pay
                                     </button>

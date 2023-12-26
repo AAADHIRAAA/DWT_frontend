@@ -81,7 +81,10 @@ const DialogBox = ({selectedMonth}) => {
         }
     };
     useEffect(() => {
-        getHolidays().then();
+        if(selectedMonth){
+            getHolidays().then();
+        }
+
     }, [selectedMonth, isOpen])
 //   return (
 //     <Dialog>

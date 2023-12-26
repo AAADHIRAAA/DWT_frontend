@@ -67,7 +67,7 @@ const PaymentStats = () => {
         Header: "Action",
         accessor: "action",
         Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status} = row.original;
+          const {username, payment, totalWorkingDays, leaves,status,userId} = row.original;
           const action = status === "paid" ? "View" : "PayNow";
 
           const handleButtonClick = () => {
@@ -75,17 +75,16 @@ const PaymentStats = () => {
             if (status === "Not Paid") {
               console.log("Pay Now action triggered");
 
-              // Implement Pay Now action
             } else {
               console.log("View action triggered");
 
-              // Implement View action
             }
           };
 
           return (
               <DialogBox
                   action={action}
+                  userId={userId}
                   username={username}
                   payment={payment}
                   totalWorkingDays={totalWorkingDays}
@@ -102,6 +101,7 @@ const PaymentStats = () => {
 
   const fetchData = async () => {
     try {
+      console.log("called");
       setIsLoadingStats(true);
       console.log("Fetch data call")
       const response = await fetch(
@@ -140,7 +140,7 @@ const PaymentStats = () => {
 
        fetchData();
 
-  }, [])
+  }, [selectedMonth])
 
   return (
     <>
