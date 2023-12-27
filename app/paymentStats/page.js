@@ -17,20 +17,7 @@ const PaymentStats = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const { user } = useUser();
 
-  const [editableCell, setEditableCell] = useState(null);
-
-  const handleCellEdit = (rowIndex, columnId) => {
-    setEditableCell({ rowIndex, columnId });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const updatedRowData = [...rowData];
-    updatedRowData[editableCell.rowIndex][editableCell.columnId] = value;
-    localStorage.setItem("rowData", JSON.stringify(updatedRowData));
-    setRowData(updatedRowData);
-    console.log(updatedRowData);
-  };
+ 
 
 
 
@@ -41,7 +28,14 @@ const PaymentStats = () => {
     }
   }, [user]);
 
-
+  const handleLinkClick = (e, userId) => {
+    e.preventDefault();
+    const selectedMonth = 12; 
+    router.push({
+      pathname: `/dailystats/${userId}`,
+      query: { userId:userId,month: selectedMonth },
+    });
+  };
   const columns = useMemo(
     () => [
       {
@@ -52,6 +46,14 @@ const PaymentStats = () => {
         Header: "Scan Agent",
         accessor: "username",
         sortType: "alphanumeric",
+        // Cell: ({ row }) => {
+        //   const { userId, username } = row.original;
+        //   return (
+        //     <a href={`/dailystats/${userId}`} onClick={(e) => handleLinkClick(e, userId)}>
+        //       {username}
+        //     </a>
+        //   );
+        // },
       },
       
       {
@@ -67,8 +69,8 @@ const PaymentStats = () => {
         Header: "Action",
         accessor: "action",
         Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status,userId} = row.original;
-          const action = status === "paid" ? "View" : "PayNow";
+          const {username, payment, totalWorkingDays, leaves,status,userId,date} = row.original;
+          const action = status === "Paid" ? "View" : "Pay";
 
           const handleButtonClick = () => {
             fetchData();
@@ -90,6 +92,7 @@ const PaymentStats = () => {
                   totalWorkingDays={totalWorkingDays}
                   leaves={leaves}
                   status={status}
+                  date={date}
                   handleButtonClick={handleButtonClick}
               />
           );
@@ -114,12 +117,8 @@ const PaymentStats = () => {
       
       const fetchedData = await response.json();
 
-      const modifiedData = fetchedData.map((dataItem) => ({
-        ...dataItem,
-        status: "Not Paid", // Set default status here
-      }));
 
-      const sortedData = modifiedData.sort((a, b) =>
+      const sortedData = fetchedData.sort((a, b) =>
           a.username.localeCompare(b.username)
       );
       setRowData(sortedData);

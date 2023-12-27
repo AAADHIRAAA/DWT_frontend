@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/app/components/ui/dialog"
 import {Minus} from "lucide-react";
@@ -12,6 +12,7 @@ const DialogBox = ({
                        totalWorkingDays,
                        leaves,
                         status,
+                        date,
                         handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ const DialogBox = ({
     const [isBonusFieldVisible, setIsBonusFieldVisible] = useState(false);
     const [isDetectFieldVisible, setIsDetectFieldVisible] = useState(false);
     const [paid, setPaid]=useState(status);
-    const [ paidDate, setPaidDate] = useState(null);
+    const [ paidDate, setPaidDate] = useState(date);
 
     const handleBonusChange = (e) => {
         if (!isNaN(Number(e))) {
@@ -104,12 +105,13 @@ const DialogBox = ({
         }
     };
 
-
+    
+   
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
             <DialogTrigger className="text-sky-600">
-                <button className={"bg-sky-800 rounded-md text-white p-2 hover:bg-sky-600"}>{action}</button>
+                <button className={"bg-sky-800 rounded-md text-white p-2 hover:bg-sky-600 w-20"}>{action}</button>
 
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white">
@@ -120,16 +122,25 @@ const DialogBox = ({
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-1 items-center gap-4">
 
-                        <p>Scan Agent: {username}</p>
-                        <p>Payment: {calculateUpdatedPayment()}</p>
-                        <p>Total Working Days: {totalWorkingDays}</p>
-                        <p>Leaves Taken: {leaves}</p>
-                        <p>Status: {paid}</p>
-                        {paid!=="Not Paid" && (
-                            <p>Date of Payment:{paidDate}</p>
+                        
+                        {paid==="Paid" && (
+                            <>
+                                <p>Scan Agent: {username}</p>
+                                <p>Payment: {payment}</p>
+                                <p>Total Working Days: {totalWorkingDays}</p>
+                                <p>Leaves Taken: {leaves}</p>
+                                <p>Status: {paid}</p>
+                                <p>Date of Payment:{paidDate}</p>
+                            </>
+                            
                         )}
                         {paid!=="Paid" &&(
                             <>
+                                <p>Scan Agent: {username}</p>
+                                <p>Payment: {calculateUpdatedPayment()}</p>
+                                <p>Total Working Days: {totalWorkingDays}</p>
+                                <p>Leaves Taken: {leaves}</p>
+                                <p>Status: {paid}</p>
                                 <div className="grid grid-cols-3 items-center gap-4">
                         <span className=" font-bold text-center col-span-3">
                           Process payment
