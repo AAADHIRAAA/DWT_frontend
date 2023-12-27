@@ -6,8 +6,9 @@ import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
-import DialogBox from "../components/holidaymonthstats";
+import DialogBox from "../components/Payment";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
+import {clearInterval} from "timers";
 
 const PaymentStats = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -16,20 +17,7 @@ const PaymentStats = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const { user } = useUser();
 
-  const [editableCell, setEditableCell] = useState(null);
-
-  const handleCellEdit = (rowIndex, columnId) => {
-    setEditableCell({ rowIndex, columnId });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const updatedRowData = [...rowData];
-    updatedRowData[editableCell.rowIndex][editableCell.columnId] = value;
-    localStorage.setItem("rowData", JSON.stringify(updatedRowData));
-    setRowData(updatedRowData);
-    console.log(updatedRowData);
-  };
+ 
 
 
 
@@ -40,7 +28,14 @@ const PaymentStats = () => {
     }
   }, [user]);
 
-
+  const handleLinkClick = (e, userId) => {
+    e.preventDefault();
+    const selectedMonth = 12; 
+    router.push({
+      pathname: `/dailystats/${userId}`,
+      query: { userId:userId,month: selectedMonth },
+    });
+  };
   const columns = useMemo(
     () => [
       {
@@ -51,6 +46,14 @@ const PaymentStats = () => {
         Header: "Scan Agent",
         accessor: "username",
         sortType: "alphanumeric",
+        // Cell: ({ row }) => {
+        //   const { userId, username } = row.original;
+        //   return (
+        //     <a href={`/dailystats/${userId}`} onClick={(e) => handleLinkClick(e, userId)}>
+        //       {username}
+        //     </a>
+        //   );
+        // },
       },
       
       {
@@ -60,10 +63,40 @@ const PaymentStats = () => {
       {
         Header: "Status",
         accessor: "status",
+
       },
       {
         Header: "Action",
         accessor: "action",
+        Cell: ({row}) => {
+          const {username, payment, totalWorkingDays, leaves,status,userId,date} = row.original;
+          const action = status === "Paid" ? "View" : "Pay";
+
+          const handleButtonClick = () => {
+            fetchData();
+            if (status === "Not Paid") {
+              console.log("Pay Now action triggered");
+
+            } else {
+              console.log("View action triggered");
+
+            }
+          };
+
+          return (
+              <DialogBox
+                  action={action}
+                  userId={userId}
+                  username={username}
+                  payment={payment}
+                  totalWorkingDays={totalWorkingDays}
+                  leaves={leaves}
+                  status={status}
+                  date={date}
+                  handleButtonClick={handleButtonClick}
+              />
+          );
+        },
       },
     ],
     []
@@ -71,8 +104,9 @@ const PaymentStats = () => {
 
   const fetchData = async () => {
     try {
+      console.log("called");
       setIsLoadingStats(true);
-      console.log(selectedMonth);
+      console.log("Fetch data call")
       const response = await fetch(
         `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
       );
@@ -83,8 +117,9 @@ const PaymentStats = () => {
       
       const fetchedData = await response.json();
 
+
       const sortedData = fetchedData.sort((a, b) =>
-        a.username.localeCompare(b.username)
+          a.username.localeCompare(b.username)
       );
       setRowData(sortedData);
 
@@ -98,27 +133,11 @@ const PaymentStats = () => {
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable({ columns, data: rowData }, useSortBy);
 
-  const handleSave = async (rowData) => {
-    try {
-      const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rowData }),
-        }
-      );
 
- 
-      console.log("Data saved successfully!");
-    } catch (error) {
-      console.error("Error saving data:", error.message);
-    }
-  };
-  useEffect( () => {
-     fetchData().then();
+
+  useEffect(   () => {
+
+       fetchData();
 
   }, [selectedMonth])
 

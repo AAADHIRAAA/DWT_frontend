@@ -81,7 +81,10 @@ const DialogBox = ({selectedMonth}) => {
         }
     };
     useEffect(() => {
-        getHolidays().then();
+        if(selectedMonth){
+            getHolidays().then();
+        }
+
     }, [selectedMonth, isOpen])
 //   return (
 //     <Dialog>
@@ -144,7 +147,7 @@ const DialogBox = ({selectedMonth}) => {
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
         <DialogTrigger className="text-sky-600">
-            Current Month : {selectedMonth}
+           <button className={"bg-sky-950 rounded-md text-white p-2 hover:bg-sky-800"}>Set Holidays</button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white">
             <DialogHeader>
