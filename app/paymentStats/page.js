@@ -4,19 +4,18 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
-import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
 import DialogBox from "../components/Payment";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
-import {clearInterval} from "timers";
+
 
 const PaymentStats = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
+  const [Month, setMonth] = useState(new Date().getMonth() +1) ;
   const { user } = useUser();
-
+  
  
 
 
@@ -28,14 +27,7 @@ const PaymentStats = () => {
     }
   }, [user]);
 
-  const handleLinkClick = (e, userId) => {
-    e.preventDefault();
-    const selectedMonth = 12; 
-    router.push({
-      pathname: `/dailystats/${userId}`,
-      query: { userId:userId,month: selectedMonth },
-    });
-  };
+ 
   const columns = useMemo(
     () => [
       {
@@ -46,14 +38,14 @@ const PaymentStats = () => {
         Header: "Scan Agent",
         accessor: "username",
         sortType: "alphanumeric",
-        // Cell: ({ row }) => {
-        //   const { userId, username } = row.original;
-        //   return (
-        //     <a href={`/dailystats/${userId}`} onClick={(e) => handleLinkClick(e, userId)}>
-        //       {username}
-        //     </a>
-        //   );
-        // },
+        Cell: ({ row }) => {
+          const { userId, username } = row.original;
+          return (
+            <a href={`/dailystats/${userId}/${Month}`} >
+              {username}
+            </a>
+          );
+        },
       },
       
       {
@@ -104,12 +96,14 @@ const PaymentStats = () => {
 
   const fetchData = async () => {
     try {
-      console.log("called");
+      
       setIsLoadingStats(true);
-      console.log("Fetch data call")
+      
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}`
       );
+
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -139,7 +133,7 @@ const PaymentStats = () => {
 
        fetchData();
 
-  }, [selectedMonth])
+  }, [Month])
 
   return (
     <>
@@ -169,7 +163,7 @@ const PaymentStats = () => {
               }}
             >
               <h1 className="text-3xl font-bold text-sky-800 ">Payment Stats</h1>
-              <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <MonthSelection selectedMonth={Month} setSelectedMonth={setMonth}/>
              
             </div>
 

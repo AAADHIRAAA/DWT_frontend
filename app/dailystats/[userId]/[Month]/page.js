@@ -1,25 +1,28 @@
 "use client";
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {usePagination, useSortBy, useTable} from "react-table";
+import { useSortBy, useTable} from "react-table";
 import {useUser} from "@clerk/nextjs";
-import Header from "../components/Header";
+import Header from "../../../components/Header";
 import Image from "next/image";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {BiChevronUp} from "react-icons/bi";
-import {ScrollArea, ScrollBar} from "@/app/components/ui/scroll-area";
-import {useFlightResponse} from "next/dist/server/app-render/use-flight-response";
+import MonthSelection from "../../../components/monthdropdown";
 
-const SpreadsheetMonth = () => {
+const SpreadsheetMonth = (req,res) => {
+    
+    const {userId,Month} = req.params;
+ 
+    const [selectedMonth, setSelectedMonth] = useState(Month) ;
     const scrollRef = useRef(null);
     const [rowData, setRowData] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
     const {user} = useUser();
     const [isLoadingStats, setIsLoadingStats] = useState(true);
-    const [fullData, setFullData] = useState([]); // Store all the data
-    const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
-    const [isLoading, setIsLoading] = useState(false); // Loading indicator
-    const [hasMore, setHasMore] = useState(true); // Whether more data is available
+    const [fullData, setFullData] = useState([]); 
+    const [visibleData, setVisibleData] = useState([]); 
+    const [isLoading, setIsLoading] = useState(false); 
+    const [hasMore, setHasMore] = useState(true); 
     const PAGE_SIZE = 50;
 
     useEffect(() => {
@@ -90,16 +93,15 @@ const SpreadsheetMonth = () => {
     const fetchData = async () => {
         try {
             setIsLoadingStats(true);
-
+                console.log("data");
             const response = await fetch(
-                "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats"
+                `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats/${userId}/${selectedMonth}`
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            // const data = await response.json();
-            // setRowData(data);
+         
             const fetchedData = await response.json();
 
             // Sort the fetched data by the "scanned_at" date in descending order
@@ -148,9 +150,11 @@ const SpreadsheetMonth = () => {
             behavior: "smooth",
         });
     };
+    useEffect(   () => {
 
-   
-
+        fetchData();
+ 
+   }, [selectedMonth])
     return (
         <>
             {!isAdmin && (
@@ -169,8 +173,17 @@ const SpreadsheetMonth = () => {
                 <>
                     <Header/>
                     <div style={{marginTop: "50px"}}>
-                        <h1 className="custom-heading">Daily Stats</h1>
-
+                        <div  style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "30px",
+              }}>
+                        <h1 className="text-3xl font-bold text-sky-800">Daily Stats</h1>
+                        <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+                        </div>
+                       
                         <div  className=" h-[500px]">
                             <table
                                 {...getTableProps()}
@@ -239,7 +252,7 @@ const SpreadsheetMonth = () => {
 
                             </button>
 
-                            {/*<ScrollBar className={" right-0"}/>*/}
+                         
 
                         </div>
                         <InfiniteScroll

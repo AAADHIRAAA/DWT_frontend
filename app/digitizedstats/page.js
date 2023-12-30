@@ -12,7 +12,7 @@ import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { Globalfilter } from "../components/Globalfilter";
-import InfiniteScroll from "react-infinite-scroll-component";
+
 import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 
 const SpreadsheetMonth = () => {
