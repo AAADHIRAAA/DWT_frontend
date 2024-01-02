@@ -21,6 +21,7 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [issues, setIssues] = useState("");
   const [userId, setUserId] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
   const { signOut } = useClerk();
 
   useEffect(() => {
@@ -111,11 +112,41 @@ const Header = () => {
 
   return (
     <header className="bg-gray-100 py-1 px-2 flex flex-col sm:flex-row justify-between items-center">
+      <div className="flex justify-start items-center align-left mr-auto">
       {user && (
         <>
-          <div className="text-center sm:text-left">
+    
+      <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="block sm:hidden focus:outline-none"
+        >
+          <svg
+            className="h-6 w-6 text-gray-800"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            {showMenu ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            )}
+          </svg>
+        </button>
+      
+          <div className="text-center sm:text-center align-center">
             <Link href="/dashboard">
-              <h2 className=" mb-3 mr-3 text-sky-800 text-lg sm:text-xl md:text-xl font-semibold xl:text-xl">
+              <h2 className=" mb-3 ml-4 text-sky-800 text-lg sm:text-xl md:text-xl font-semibold xl:text-xl ">
                 #ServantsOfKnowledge
               </h2>
             </Link>
@@ -129,14 +160,52 @@ const Header = () => {
         </>
       )}
       {!user && (
-        <nav className="flex items-center justify-between ">
-          <h2 className="mb-3 mr-4 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
+        <>
+        <div className="mr-auto">
+        <button
+        onClick={() => setShowMenu(!showMenu)}
+        className="block sm:hidden focus:outline-none"
+      >
+        <svg
+          className="h-6 w-6 text-gray-800"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          {showMenu ? (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          ) : (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
+          )}
+        </svg>
+      </button>
+        </div>
+        
+        <nav className="flex justify-between">
+        
+          <h2 className="mb-3 ml-4 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
             #ServantsOfKnowledge
           </h2>
+          
         </nav>
+        </>
       )}
 
-      <nav className="flex items-center justify-between sm:justify-start w-full sm:w-auto">
+
+      </div>
+      
+      
+      <nav className="hidden sm:flex items-center justify-between sm:justify-start w-full sm:w-auto">
         <>
           {!user && (
             <>
@@ -151,6 +220,7 @@ const Header = () => {
 
           {user && (
             <>
+              
               {isAdmin && (
                 <Link href=" /admin" className="mr-4">
                   <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
@@ -209,6 +279,85 @@ const Header = () => {
           )}
         </>
       </nav>
+      
+        
+        <nav className={showMenu ? "flex sm:hidden" : "hidden"}>
+        
+      
+        <div className="flex flex-row  items-center gap-3 sm:justify-start w-full sm:w-auto">
+       
+          {!user && (
+            <>
+              <button className="bg-sky-800 text-white p-2 rounded-xl">
+                <SignInButton />
+              </button>
+              <div className="mt-2">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </>
+          )}
+          {user && (
+            <>
+              <div className="mr-3">
+                {selectedScribe && (
+                  <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
+                    {selectedScribe}
+                  </h2>
+                )}
+              </div>
+
+              {isAdmin && (
+                <Link href=" /admin" className="mr-3">
+                  <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
+                    Admin
+                  </h2>
+                </Link>
+              )}
+               
+
+              <Link href="/workreport" className="mr-3 ">
+                <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
+                  Dashboard
+                </h2>
+              </Link>
+              <div className="my-2 mr-3">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+              <div>
+                <button
+                  onClick={handleLogout}
+                  className="  bg-red-500 hover:bg-red-700 text-white  py-1 px-1 rounded"
+                >
+                  End day
+                </button>
+                <div className="ml-4 text-sky-800">
+                  {logoutTime && <p>Logout Time: {logoutTime}</p>}
+                </div>
+                {showModal && (
+                  <div>
+                    <div className="mr-4 ml-8">
+                      <h1 className="text-sky-800 mt-4">Enter any issues:</h1>
+                      <textarea
+                        value={issues}
+                        className="border border-gray-300 p-2 rounded-md  h-24 mt-2 focus:outline-none focus:border-sky-500 text-sky-800"
+                        placeholder="Enter your issues here..."
+                        onChange={(e) => setIssues(e.target.value)}
+                      />
+                      <button
+                        onClick={handleIssuesSubmit}
+                        className="border border-gray-300 p-2 rounded-md  h-15 ml-2 bg-sky-800 text-white"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </nav>
+      
     </header>
   );
 };
