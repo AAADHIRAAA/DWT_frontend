@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
 import MonthSelection from "../components/monthdropdown";
+import YearSelection from "../components/yeardropdown";
 import DialogBox from "../components/Payment";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
 
@@ -14,11 +15,9 @@ const PaymentStats = () => {
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [Month, setMonth] = useState(new Date().getMonth() +1) ;
+  const [Year, setYear] = useState(new Date().getFullYear());
   const { user } = useUser();
   
- 
-
-
 
   useEffect(() => {
     if (user) {
@@ -100,7 +99,7 @@ const PaymentStats = () => {
       setIsLoadingStats(true);
       
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}`
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}/${Year}`
       );
 
 
@@ -135,6 +134,12 @@ const PaymentStats = () => {
 
   }, [Month])
 
+  useEffect(   () => {
+
+    fetchData();
+
+}, [Year])
+
   return (
     <>
       {!isAdmin && (
@@ -164,7 +169,7 @@ const PaymentStats = () => {
             >
               <h1 className="text-3xl font-bold text-sky-800 ">Payment Stats</h1>
               <MonthSelection selectedMonth={Month} setSelectedMonth={setMonth}/>
-             
+              <YearSelection selectedYear={Year} setSelectedYear={setYear}/>
             </div>
 
             <ScrollArea className=" h-[70vh]  ">

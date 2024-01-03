@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
+import YearSelection from "../components/yeardropdown";
 import DialogBox from "../components/holidaymonthstats";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
 import {clearInterval} from "timers";
@@ -15,25 +16,10 @@ const LeaderBoardMonth = () => {
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const { user } = useUser();
 
-  const [editableCell, setEditableCell] = useState(null);
-
-  const handleCellEdit = (rowIndex, columnId) => {
-    setEditableCell({ rowIndex, columnId });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const updatedRowData = [...rowData];
-    updatedRowData[editableCell.rowIndex][editableCell.columnId] = value;
-    localStorage.setItem("rowData", JSON.stringify(updatedRowData));
-    setRowData(updatedRowData);
-    console.log(updatedRowData);
-  };
-
-
-
+  
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
@@ -92,7 +78,7 @@ const LeaderBoardMonth = () => {
       setIsLoadingStats(true);
       console.log(selectedMonth);
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}`
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${selectedMonth}/${selectedYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -106,10 +92,6 @@ const LeaderBoardMonth = () => {
         a.username.localeCompare(b.username)
       );
       setRowData(sortedData);
-
-      // Merge the existing rowData with the newData fetched from the API
-      // const updatedRowData = [...rowData, ...newData];
-      // setRowData(updatedRowData);
 
       setIsLoadingStats(false);
     } catch (error) {
@@ -125,6 +107,11 @@ const LeaderBoardMonth = () => {
      fetchData().then();
 
   }, [selectedMonth])
+
+  useEffect( () => {
+    fetchData().then();
+
+ }, [selectedYear])
 
   return (
     <>
@@ -155,6 +142,7 @@ const LeaderBoardMonth = () => {
             >
               <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
               <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
               <DialogBox selectedMonth={selectedMonth}/>
             </div>
 
