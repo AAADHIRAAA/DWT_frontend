@@ -132,13 +132,9 @@ const PaymentStats = () => {
 
        fetchData();
 
-  }, [Month])
+  }, [Month,Year])
 
-  useEffect(   () => {
-
-    fetchData();
-
-}, [Year])
+ 
 
   return (
     <>

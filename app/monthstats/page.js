@@ -106,12 +106,9 @@ const LeaderBoardMonth = () => {
   useEffect( () => {
      fetchData().then();
 
-  }, [selectedMonth])
+  }, [selectedMonth,selectedYear])
 
-  useEffect( () => {
-    fetchData().then();
-
- }, [selectedYear])
+  
 
   return (
     <>
