@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Link from "next/link";
 import DashboardContainer from "../components/dashboardContainer";
-
+import DialogBox from "../components/holidaymonthstats";
 import { useUser } from "@clerk/nextjs";
 
 const MonthStats = () => {
@@ -88,7 +88,7 @@ const MonthStats = () => {
                 marginBottom: "40px",
               }}
             >
-              <Link href="/dailystats">
+              <Link href="/accounts">
                 <h1
                   style={{
                     color: "white",
@@ -96,7 +96,7 @@ const MonthStats = () => {
                     fontSize: "20px",
                   }}
                 >
-                  Daily Stats
+                  Accounts Menu
                 </h1>
               </Link>
             </div>
@@ -138,7 +138,7 @@ const MonthStats = () => {
                 marginBottom: "40px",
               }}
             >
-              <Link href="/paymentStats">
+              <Link href="/dailytats">
                 <h1
                   style={{
                     color: "white",
@@ -146,7 +146,7 @@ const MonthStats = () => {
                     fontSize: "20px",
                   }}
                 >
-                  Payment Stats
+                  Daily Stats
                 </h1>
               </Link>
             </div>
@@ -175,6 +175,8 @@ const MonthStats = () => {
                 </h1>
               </Link>
             </div>
+        
+            
           </div>
         </>
       )}

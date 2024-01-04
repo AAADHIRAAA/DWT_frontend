@@ -6,22 +6,52 @@ import {
 } from "@/app/components/ui/dialog"
 import {ScrollArea, ScrollBar} from "@/app/components/ui/scroll-area";
 import {Minus} from "lucide-react";
-
-const DialogBox = ({selectedMonth}) => {
+import MonthSelection from "../components/monthdropdown";
+import YearSelection from "../components/yeardropdown";
+const DialogBox = () => {
     const [isOpen, setIsOpen] = useState(false);
-
-    const [weekOff, setWeekOff] = useState("0");
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [weekOff, setWeekOff] = useState(0);
     const [holidays, setHolidays] = useState([]);
 
+    const date = new Date(selectedYear,selectedMonth-1,1);
+
+  const getCurrentMonthStartDate = () => {
+    
+    return new Date(selectedYear, selectedMonth-1, 1);
+  };
+
+  const getCurrentMonthEndDate = () => {
+  
+    return new Date(selectedYear, selectedMonth, 0);
+  };
 
     const addHoliday = () => {
-        setHolidays([...holidays, {date: new Date(), name: ""}]);
+        setHolidays([...holidays, {date: date, name: ""}]);
     };
 
-    const handleWeekOffChange = (e) => {
-        setWeekOff(e.target.value);
-    };
-
+   
+    const getNumberOfSundays = () => {
+  
+        const firstDayOfMonth = new Date(selectedYear, selectedMonth-1, 1);
+        const lastDayOfMonth = new Date(selectedYear, selectedMonth , 0);
+       
+        let numberOfSundays = 0;
+      
+        for (let date = firstDayOfMonth; date <= lastDayOfMonth; date.setDate(date.getDate() + 1)) {
+          if (date.getDay() === 0) {
+            numberOfSundays++; 
+          }
+        }
+    
+      
+       setWeekOff(numberOfSundays);
+   
+        return numberOfSundays;
+        
+      };
+      
     const handleHolidayChange = (index, field, value) => {
         const updatedHolidays = [...holidays];
         updatedHolidays[index][field] = value;
@@ -29,13 +59,15 @@ const DialogBox = ({selectedMonth}) => {
     };
 
     const getHolidays = async () => {
-        const response = await fetch("https://digitized-work-tracker-backend.vercel.app/api/v1/admin/monthlyholidays/" + selectedMonth)
+        const response = await fetch(`https://digitized-work-tracker-backend.vercel.app/api/v1/admin/monthlyholidays/${selectedMonth}/${selectedYear}`)
+        console.log("HOLIDAY");
+        console.log(selectedYear,selectedMonth);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const holidayData = await response.json()
         if (holidayData!=null) {
-            setWeekOff(holidayData.weekOff)
+            
 
             const formattedData = holidayData?.holidays.map(item => ({
                 date: new Date(item.holidayDate),
@@ -46,7 +78,7 @@ const DialogBox = ({selectedMonth}) => {
             setHolidays(formattedData);
         }else{
             setHolidays([]);
-            setWeekOff("0");
+            
         }
 
     }
@@ -59,18 +91,19 @@ const DialogBox = ({selectedMonth}) => {
     const handleSubmit = async () => {
         try {
             const data = {
+                year:selectedYear,
                 month: selectedMonth,
                 weekOff: weekOff,
                 holidays: holidays.filter((holiday) => holiday.date && holiday.name),
             };
 
-
+            console.log(selectedYear,selectedMonth);
             const response = await fetch("https://digitized-work-tracker-backend.vercel.app/api/v1/admin/month", {
                 method: "POST", headers: {
                     "Content-Type": "application/json",
                 }, body: JSON.stringify(data),
             });
-
+                
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -80,95 +113,52 @@ const DialogBox = ({selectedMonth}) => {
             console.error("Error submitting data:", error.message);
         }
     };
+
+   
     useEffect(() => {
-        if(selectedMonth){
+        if(selectedMonth ){
+      
             getHolidays().then();
+            
         }
 
-    }, [selectedMonth, isOpen])
-//   return (
-//     <Dialog>
-//       <DialogTrigger onClick={openDialog} className="text-sky-600">
-//         Current Month : {currentMonth}
-//       </DialogTrigger>
-//           <DialogContent >
-//             <form className="flex flex-col gap-5 text-sky-600 border border-grey-600 rounded p-4 mb-4">
-//               <div className="flex flex-row gap-5">
-//                 <label>Weekoff:</label>
-//                 <input
-//                   className="border border-gray-300 rounded-md "
-//                   value={weekOff}
-//                   onChange={handleWeekOffChange}
-//                 ></input>
-//               </div>
-//               {holidays.map((holiday, index) => (
-//                 <div key={index} className="flex flex-col gap-5">
-//                   <div className="flex flex-row gap-5">
-//                     <label>Holiday Date:</label>
-//                     <DatePicker
-//                       selected={holiday.date}
-//                       onChange={(date) =>
-//                         handleHolidayChange(index, "date", date)
-//                       }
-//                       dateFormat="MM/dd/yyyy"
-//                     />
-//                   </div>
-//                   <div className="flex flex-row gap-5">
-//                     <label>Holiday Name:</label>
-//                     <input
-//                       className="border border-gray-300 rounded-md"
-//                       value={holiday.name}
-//                       onChange={(e) =>
-//                         handleHolidayChange(index, "name", e.target.value)
-//                       }
-//                     ></input>
-//                   </div>
-//                 </div>
-//               ))}
-//               <button
-//                 type="button"
-//                 className="border border-gray-300 bg-sky-800 hover:bg-sky-600 text-white rounded-md px-2 py-1 w-20 ml-auto"
-//                 onClick={addHoliday}
-//               >
-//                 Add
-//               </button>
-//               <button
-//                 type="button"
-//                 className="border border-gray-300 bg-sky-800 hover:bg-sky-600 text-white rounded-md px-2 py-1 mb-2 w-20 ml-auto mr-auto"
-//                 onClick={handleSubmit}
-//               >
-//                 Update
-//               </button>
-//             </form>
-//           </DialogContent>
-//     </Dialog>
-//   );
+    }, [selectedMonth,selectedYear, isOpen])
+
+    useEffect(() => {
+       
+        getNumberOfSundays();
+            
+    }, [selectedMonth,selectedYear, isOpen])
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
         <DialogTrigger className="text-sky-600">
-           <button className={"bg-sky-950 rounded-md text-white p-2 hover:bg-sky-800"}>Set Holidays</button>
+           <button className={" text-white "}>Set Holidays</button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white">
             <DialogHeader>
                 <DialogTitle>Add Holiday Info</DialogTitle>
-
+                <div className="flex flex-row gap-2 text-black-900">
+                <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
+                </div>
+                
             </DialogHeader>
+         
             <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-3 items-center gap-4">
                     <label htmlFor="name" className="text-right c">
-                        Week Off (s) :
+                        Week Off (s) : 
                     </label>
                     <input
                         id="name"
-                        placeholder={"Number Of Week Offs"}
-                        defaultValue={weekOff}
-                        onChange={handleWeekOffChange}
+                        value={weekOff}
                         className="col-span-2 bg-blue-100 rounded-2xl p-2"
+                        readOnly
                     />
                 </div>
                 <div className="grid grid-cols-3 items-center gap-4">
-                        <span className=" font-bold text-center col-span-3">
+                        <span className=" font-bold text-center col-span-3 text-sky-800">
                           Holidays
                         </span>
                 </div>
@@ -186,6 +176,8 @@ const DialogBox = ({selectedMonth}) => {
                                             selected={holiday.date}
                                             onChange={(date) => handleHolidayChange(index, "date", date)}
                                             dateFormat="MM/dd/yyyy"
+                                            minDate={getCurrentMonthStartDate()}
+                                            maxDate={getCurrentMonthEndDate()}
                                         />
                                         </div>
                                     </div>
