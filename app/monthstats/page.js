@@ -83,10 +83,15 @@ const LeaderBoardMonth = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      
 
       
       const fetchedData = await response.json();
-
+      // if (fetchedData.length === 0) {
+      //   setRowData([]); // Set rowData to an empty array when no data is available
+      //   setIsLoadingStats(false);
+      //   return;
+      // }
       // Sort the fetched data by the "userName" column in ascending order
       const sortedData = fetchedData.sort((a, b) =>
         a.username.localeCompare(b.username)
@@ -140,7 +145,7 @@ const LeaderBoardMonth = () => {
               <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
               <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
               <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
-              <DialogBox selectedMonth={selectedMonth}/>
+            
             </div>
 
             <ScrollArea className=" h-[70vh]  ">

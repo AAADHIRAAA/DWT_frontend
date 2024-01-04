@@ -138,7 +138,7 @@ const MonthStats = () => {
                 marginBottom: "40px",
               }}
             >
-              <Link href="/dailytats">
+              <Link href="/dailystats">
                 <h1
                   style={{
                     color: "white",
