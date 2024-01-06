@@ -2,17 +2,18 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import { useSortBy, useTable} from "react-table";
 import {useUser} from "@clerk/nextjs";
-import Header from "../../../components/Header";
+import Header from "../../../../components/Header";
 import Image from "next/image";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {BiChevronUp} from "react-icons/bi";
-import MonthSelection from "../../../components/monthdropdown";
+import MonthSelection from "../../../../components/monthdropdown";
+import YearSelection from "../../../../components/yeardropdown";
 
 const SpreadsheetMonth = (req,res) => {
     
-    const {userId,Month} = req.params;
- 
+    const {userId,Month,Year} = req.params;
+    const [selectedYear, setSelectedYear] = useState(Year) ;
     const [selectedMonth, setSelectedMonth] = useState(Month) ;
     const scrollRef = useRef(null);
     const [rowData, setRowData] = useState([]);
@@ -95,7 +96,7 @@ const SpreadsheetMonth = (req,res) => {
             setIsLoadingStats(true);
                 console.log("data");
             const response = await fetch(
-                `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats/${userId}/${selectedMonth}`
+                `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats/${userId}/${selectedMonth}/${selectedYear}`
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -154,7 +155,7 @@ const SpreadsheetMonth = (req,res) => {
 
         fetchData();
  
-   }, [selectedMonth])
+   }, [selectedMonth,selectedYear])
     return (
         <>
             {!isAdmin && (
@@ -182,6 +183,7 @@ const SpreadsheetMonth = (req,res) => {
               }}>
                         <h1 className="text-3xl font-bold text-sky-800">Daily Stats</h1>
                         <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+                        <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
                         </div>
                        
                         <div  className=" h-[500px]">

@@ -4,21 +4,23 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
+import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
 import YearSelection from "../components/yeardropdown";
-import DialogBox from "../components/Payment";
+import DialogBox from "../components/holidaymonthstats";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
+import {clearInterval} from "timers";
 
-
-const PaymentStats = () => {
+const Holiday = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-  const [Month, setMonth] = useState(new Date().getMonth() +1) ;
-  const [Year, setYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const { user } = useUser();
-  
+  const [message, setMessage]=useState("");
 
+  
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
@@ -26,7 +28,7 @@ const PaymentStats = () => {
     }
   }, [user]);
 
- 
+
   const columns = useMemo(
     () => [
       {
@@ -34,107 +36,71 @@ const PaymentStats = () => {
         accessor: (row, index) => index + 1, // Automatically generate serial number
       },
       {
-        Header: "Scan Agent",
-        accessor: "username",
-        sortType: "alphanumeric",
-        Cell: ({ row }) => {
-          const { userId, username } = row.original;
-          return (
-            <a href={`/dailystats/${userId}/${Month}/${Year}`} >
-              {username}
-            </a>
-          );
-        },
-      },
-      
-      {
-        Header: "Payment",
-        accessor: "payment",
+        Header: "Holiday Date",
+        accessor: "holidayDate",
+     
       },
       {
-        Header: "Status",
-        accessor: "status",
-
+        Header: "Holiday Name",
+        accessor: "holidayName",
       },
-      {
-        Header: "Action",
-        accessor: "action",
-        Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status,userId,date} = row.original;
-          const action = status === "Paid" ? "View" : "Pay";
-
-          const handleButtonClick = () => {
-            fetchData();
-            if (status === "Not Paid") {
-              console.log("Pay Now action triggered");
-
-            } else {
-              console.log("View action triggered");
-
-            }
-          };
-
-          return (
-              <DialogBox
-                  action={action}
-                  userId={userId}
-                  username={username}
-                  payment={payment}
-                  totalWorkingDays={totalWorkingDays}
-                  leaves={leaves}
-                  status={status}
-                  date={date}
-                  handleButtonClick={handleButtonClick}
-              />
-          );
-        },
-      },
+    
     ],
     []
   );
 
   const fetchData = async () => {
     try {
-      
       setIsLoadingStats(true);
-      
+      console.log(selectedMonth);
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}/${Year}`
+        "http://localhost:5200/api/v1/users/view-holidays"
       );
-
-
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+      const responseData = await response.json(); // Parse the JSON response
+        let holidays = responseData.message;
       
-      const fetchedData = await response.json();
+      if(!holidays || holidays.length === 0 || (holidays.length === 1 && holidays[0].length === 0)){
+            setMessage("No Holidays registered");
+      }
+      else{
+        holidays = holidays.flat().sort((a, b) => new Date(a.holidayDate) - new Date(b.holidayDate));
 
+      const formattedData = holidays.map(holiday => ({
+        holidayDate: formatDate(holiday.holidayDate),
+        holidayName: holiday.holidayName
+      }));
 
-      const sortedData = fetchedData.sort((a, b) =>
-          a.username.localeCompare(b.username)
-      );
-      setRowData(sortedData);
+      setRowData(formattedData);
+      }
+      
 
-    
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable({ columns, data: rowData }, useSortBy);
 
 
+  useEffect( () => {
+     fetchData().then();
 
-  useEffect(   () => {
+  }, [])
 
-       fetchData();
-
-  }, [Month,Year])
-
- 
+  
 
   return (
     <>
@@ -163,9 +129,9 @@ const PaymentStats = () => {
                 gap: "30px",
               }}
             >
-              <h1 className="text-3xl font-bold text-sky-800 ">Payment Stats</h1>
-              <MonthSelection selectedMonth={Month} setSelectedMonth={setMonth}/>
-              <YearSelection selectedYear={Year} setSelectedYear={setYear}/>
+              <h1 className="text-3xl font-bold text-sky-800 mb-4">Holidays</h1>
+              
+            
             </div>
 
             <ScrollArea className=" h-[70vh]  ">
@@ -212,9 +178,15 @@ const PaymentStats = () => {
                       </tr>
                     );
                   })}
+                  <div className="mr-auto">
+                        <div className=" mt-4 mb-4 ml-4 text-sky-900 items-center font-bold text-lg">{message}</div>
+                  </div>
+                   
                 </tbody>
               </table>
+             
             </ScrollArea>
+           
           </div>
         </>
       )}
@@ -222,4 +194,4 @@ const PaymentStats = () => {
   );
 };
 
-export default PaymentStats;
+export default Holiday;
