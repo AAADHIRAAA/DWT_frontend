@@ -113,11 +113,8 @@ const DataForm = () => {
       title,
       pages_scanned,
       ID_url,
-      author_name,
-      publisher_name,
-      year,
-      isbn,
-      language,
+     year,
+     
     } = formData;
 
     if (!title || !pages_scanned || !ID_url) {
