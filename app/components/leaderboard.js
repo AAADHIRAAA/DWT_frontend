@@ -24,15 +24,19 @@ const LeaderBoard = () => {
         accessor: "username",
       },
       {
-        Header: "Scribe Number",
+        Header: "Scribe#",
         accessor: "scribeNumber",
       },
       {
-        Header: "Total Books Scanned",
+        Header: "#Books",
         accessor: "totalBooks",
       },
       {
-        Header: "Total Pages Scanned",
+        Header: "#Corrections",
+        accessor: "corrections",
+      },
+      {
+        Header: "#Pages",
         accessor: "totalPages",
       },
     ],
