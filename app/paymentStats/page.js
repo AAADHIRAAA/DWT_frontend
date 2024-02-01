@@ -110,10 +110,14 @@ const PaymentStats = () => {
       
       const fetchedData = await response.json();
 
+     
+     // Filter out records where username is not null
+    const filteredData = fetchedData.filter(item => item.username != null);
 
-      const sortedData = fetchedData.sort((a, b) =>
-          a.username.localeCompare(b.username)
-      );
+    // Sort the filtered data by username
+    const sortedData = filteredData.sort((a, b) =>
+      a.username.localeCompare(b.username)
+    );
       setRowData(sortedData);
 
     
