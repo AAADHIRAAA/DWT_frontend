@@ -9,21 +9,24 @@ const DialogBox = ({
                        userId,
                        username,
                        payment,
+                       singleDaySalary,
                        totalWorkingDays,
                        leaves,
                         status,
                         date,
+                        actualPayment,
                         handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const [bonus, setBonus] = useState(0);
     const [detect, setDetect] = useState(0);
+    const [detectday, setDetectday] = useState(0);
     const [isBonusFieldVisible, setIsBonusFieldVisible] = useState(false);
     const [isDetectFieldVisible, setIsDetectFieldVisible] = useState(false);
     const [paid, setPaid]=useState(status);
     const [ paidDate, setPaidDate] = useState(date);
-
+  
     const handleBonusChange = (e) => {
         if (!isNaN(Number(e))) {
             setBonus(Number(e));
@@ -37,6 +40,12 @@ const DialogBox = ({
         }
 
     };
+    const handleDetectDayChange = (e)=>{
+        if(!isNaN(Number(e))){
+            setDetectday(Number(e));
+            calculateUpdatedPayment();
+        }
+    }
 
     const removeBonus = () => {
         setBonus(0);
@@ -52,15 +61,14 @@ const DialogBox = ({
     };
     const detectSalary = () => {
         setIsDetectFieldVisible(!isDetectFieldVisible);
-        // const oneDaySalary = 333.333;
-        // setSalary((prevSalary) => prevSalary - oneDaySalary);
+        
 
     };
 
 
     const calculateUpdatedPayment = () => {
 
-        return (payment + bonus - detect);
+        return (payment + bonus - detect -detectday*singleDaySalary);
     };
 
     const updateStatus =()=>{
@@ -126,6 +134,7 @@ const DialogBox = ({
                         {paid==="Paid" && (
                             <>
                                 <p>Scan Agent: {username}</p>
+                                <p>Actual Payment: {actualPayment}</p>
                                 <p>Payment: {payment}</p>
                                 <p>Total Working Days: {totalWorkingDays}</p>
                                 <p>Leaves Taken: {leaves}</p>
@@ -137,6 +146,7 @@ const DialogBox = ({
                         {paid!=="Paid" &&(
                             <>
                                 <p>Scan Agent: {username}</p>
+                                <p>Actual Payment: {actualPayment}</p>
                                 <p>Payment: {calculateUpdatedPayment()}</p>
                                 <p>Total Working Days: {totalWorkingDays}</p>
                                 <p>Leaves Taken: {leaves}</p>
@@ -194,15 +204,17 @@ const DialogBox = ({
                                         <div className={" overflow-auto max-h-[40vh]"}>
                                             <div id={"bonus-info"}>
                                                 <div
-                                                    className={"flex flex-row justify-center align-middle items-center"}
+                                                    className={"flex flex-col justify-center align-middle items-center"}
                                                 >
+                                                    <div className="flex flex-row align-middle items-center justify-center">
                                                     <div className="flex flex-col m-3">
                                                         <div className="grid grid-cols-3">
-                                                            <label>Detect: </label>
+                                                            <label>Detect Amt: </label>
                                                             <input
                                                                 autoFocus
                                                                 className="border border-gray-300 rounded-md p-1 col-span-2"
                                                                 value={detect}
+                                                                
                                                                 onChange={(e)=>handleDetectChange(e.target.value)}
                                                             ></input>
                                                         </div>
@@ -211,6 +223,26 @@ const DialogBox = ({
                                                         <button onClick={removeDetect}>
                                                             <Minus className={"rounded-xl bg-blue-300"} />
                                                         </button>
+                                                    </div>
+                                                    </div>
+                                                    <div className="flex flex-row justify-center items-center align-middle">
+                                                    <div className="flex flex-col m-3">
+                                                        <div className="grid grid-cols-3">
+                                                            <label>Detect Wday: </label>
+                                                            <input
+                                                                autoFocus
+                                                                className="border border-gray-300 rounded-md p-1 col-span-2"
+                                                                value={detectday}
+                                                                
+                                                                onChange={(e)=>handleDetectDayChange(e.target.value)}
+                                                            ></input>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <button onClick={removeDetect}>
+                                                            <Minus className={"rounded-xl bg-blue-300"} />
+                                                        </button>
+                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>

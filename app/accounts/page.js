@@ -68,7 +68,32 @@ const MonthStats = () => {
           
           <div className="flex justify-center mt-10 space-x-4">
             
-         
+          <div
+              style={{
+                textAlign: "center",
+                display: "inline-block",
+                marginLeft: "40px",
+                height: "80px",
+                width: "200px", // Set the width of the container
+                borderRadius: "8px", // Add border-radius for rounded corners
+                boxShadow: "8px 10px 16px rgba(0.2, 0.1, 0.1, 0.2)", // Add box shadow
+                backgroundColor: "#075985",
+                marginBottom: "40px",
+              }}
+            >
+              <Link href="/scanAgent">
+                <h1
+                  style={{
+                    color: "white",
+                    marginTop: "20px",
+                    fontSize: "20px",
+                  }}
+                >
+                  ScanAgent Details
+                </h1>
+              </Link>
+            </div>
+
             <div
               style={{
                 textAlign: "center",

@@ -4,22 +4,20 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
-import Image from "next/image";
 import MonthSelection from "../components/monthdropdown";
 import YearSelection from "../components/yeardropdown";
-import DialogBox from "../components/holidaymonthstats";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
-import {clearInterval} from "timers";
+import DialogBox from "../components/salary";
+import DialogBoxforprofile from "../components/profile";
 
-const Holiday = () => {
+const ScanAgentDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const { user } = useUser();
-  const [message, setMessage]=useState("");
-
+    
   
   useEffect(() => {
     if (user) {
@@ -36,15 +34,64 @@ const Holiday = () => {
         accessor: (row, index) => index + 1, // Automatically generate serial number
       },
       {
-        Header: "Holiday Date",
-        accessor: "holidayDate",
-     
+        Header: "Scan Agent",
+        accessor: "username",
+        sortType: "alphanumeric",
+        Cell: ({ row }) => {
+          const { userId, username } = row.original;
+          return (
+            <a href={`/dailystats/${userId}/${selectedMonth}/${selectedYear}`} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+              {username}
+            </a>
+          );
+        },
       },
       {
-        Header: "Holiday Name",
-        accessor: "holidayName",
+        Header: "Profile",
+        accessor: "profile",
+        Cell: ({row}) => {
+          <button onclick={()=>handleButtonClick(row.original)}>Edit</button>
+          const {userId} = row.original;
+          const action = "View";
+
+
+          return (
+              <DialogBoxforprofile
+                  action={action}
+                  userId={userId}
+              />
+          );
       },
-    
+      },
+
+      {
+        Header: "Actual Salary",
+        accessor: "actualPay",
+      },
+        {
+            Header: "Action",
+            accessor: "action",
+            Cell: ({row}) => {
+                <button onclick={()=>handleButtonClick(row.original)}>Edit</button>
+                const {username,userId} = row.original;
+                const action = "Edit";
+
+                const handleButtonClick = () => {
+                    fetchData().then();
+                };
+
+                return (
+                    <DialogBox
+                        action={action}
+                        userId={userId}
+                        username={username}
+                        handleButtonClick={handleButtonClick}
+                    />
+                );
+            },
+        },
+
+
     ],
     []
   );
@@ -54,41 +101,34 @@ const Holiday = () => {
       setIsLoadingStats(true);
       console.log(selectedMonth);
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/users/view-holidays"
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/users/${selectedMonth}/${selectedYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const responseData = await response.json(); // Parse the JSON response
-        let holidays = responseData.message;
       
-      if(!holidays || holidays.length === 0 || (holidays.length === 1 && holidays[0].length === 0)){
-            setMessage("No Holidays registered");
-      }
-      else{
-        holidays = holidays.flat().sort((a, b) => new Date(a.holidayDate) - new Date(b.holidayDate));
 
-      const formattedData = holidays.map(holiday => ({
-        holidayDate: formatDate(holiday.holidayDate),
-        holidayName: holiday.holidayName
-      }));
-
-      setRowData(formattedData);
-      }
       
+      const fetchedData = await response.json();
+    
+        const filteredData = fetchedData.filter((row) => row.username !== null);
+      // Sort the fetched data by the "userName" column in ascending order
+      const sortedData = filteredData.sort((a, b) =>{
+          if(a.username!==null && b.username !==null){
+              return a.username.localeCompare(b.username)
+          }
+          else{
+              return 0;
+          }
+      }
+
+      );
+      setRowData(sortedData);
 
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
   };
 
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
@@ -98,7 +138,7 @@ const Holiday = () => {
   useEffect( () => {
      fetchData().then();
 
-  }, [])
+  }, [selectedMonth,selectedYear])
 
   
 
@@ -129,8 +169,9 @@ const Holiday = () => {
                 gap: "30px",
               }}
             >
-              <h1 className="text-3xl font-bold text-sky-800 mb-4">Holidays</h1>
-              
+              <h1 className="text-3xl font-bold text-sky-800 ">ScanAgent Details</h1>
+              <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
             
             </div>
 
@@ -178,15 +219,9 @@ const Holiday = () => {
                       </tr>
                     );
                   })}
-                  <div className="mr-auto">
-                        <div className=" mt-4 mb-4 ml-4 text-sky-900 items-center font-bold text-lg">{message}</div>
-                  </div>
-                   
                 </tbody>
               </table>
-             
             </ScrollArea>
-           
           </div>
         </>
       )}
@@ -194,4 +229,4 @@ const Holiday = () => {
   );
 };
 
-export default Holiday;
+export default ScanAgentDetails;

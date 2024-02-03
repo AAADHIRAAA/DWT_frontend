@@ -40,11 +40,19 @@ const PaymentStats = () => {
         Cell: ({ row }) => {
           const { userId, username } = row.original;
           return (
-            <a href={`/dailystats/${userId}/${Month}/${Year}`} >
+            <a href={`/dailystats/${userId}/${Month}/${Year}`} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
               {username}
             </a>
           );
         },
+      },
+      {
+        Header: "Total days",
+        accessor: "totalDays",
+      },
+      {
+        Header: "Leaves taken",
+        accessor: "leaves",
       },
       
       {
@@ -60,7 +68,7 @@ const PaymentStats = () => {
         Header: "Action",
         accessor: "action",
         Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status,userId,date} = row.original;
+          const {username, payment, totalWorkingDays, leaves,status,userId,date,singleDaySalary,actualPayment} = row.original;
           const action = status === "Paid" ? "View" : "Pay";
 
           const handleButtonClick = () => {
@@ -80,10 +88,12 @@ const PaymentStats = () => {
                   userId={userId}
                   username={username}
                   payment={payment}
+                  singleDaySalary={singleDaySalary}
                   totalWorkingDays={totalWorkingDays}
                   leaves={leaves}
                   status={status}
                   date={date}
+                  actualPayment = {actualPayment}
                   handleButtonClick={handleButtonClick}
               />
           );
@@ -110,10 +120,14 @@ const PaymentStats = () => {
       
       const fetchedData = await response.json();
 
+     
+     // Filter out records where username is not null
+    const filteredData = fetchedData.filter(item => item.username != null);
 
-      const sortedData = fetchedData.sort((a, b) =>
-          a.username.localeCompare(b.username)
-      );
+    // Sort the filtered data by username
+    const sortedData = filteredData.sort((a, b) =>
+      a.username.localeCompare(b.username)
+    );
       setRowData(sortedData);
 
     

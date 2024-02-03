@@ -65,10 +65,7 @@ const LeaderBoardMonth = () => {
         accessor: "leaves",
       },
 
-      {
-        Header: "Payment",
-        accessor: "payment",
-      },
+     
     ],
     []
   );
@@ -92,9 +89,17 @@ const LeaderBoardMonth = () => {
       //   setIsLoadingStats(false);
       //   return;
       // }
+        const filteredData = fetchedData.filter((row) => row.username !== null);
       // Sort the fetched data by the "userName" column in ascending order
-      const sortedData = fetchedData.sort((a, b) =>
-        a.username.localeCompare(b.username)
+      const sortedData = filteredData.sort((a, b) =>{
+          if(a.username!==null && b.username !==null){
+              a.username.localeCompare(b.username)
+          }
+          else{
+              return 0;
+          }
+      }
+
       );
       setRowData(sortedData);
 
