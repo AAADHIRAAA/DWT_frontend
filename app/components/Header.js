@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   RedirectToSignIn,
   SignInButton,
+  UserProfile,
   UserButton,
   useClerk,
   useUser,
@@ -214,6 +215,7 @@ const Header = () => {
               </button>
               <div className="mr-2">
                 <UserButton afterSignOutUrl="/" />
+              
               </div>
             </>
           )}
@@ -243,7 +245,9 @@ const Header = () => {
               </Link>
 
               <div className="mr-4">
-                <UserButton afterSignOutUrl="/" />
+             
+                <UserButton userProfileMode="navigation"  userProfileUrl="/profile" afterSignOutUrl="/" />
+
               </div>
               <div>
                 <button

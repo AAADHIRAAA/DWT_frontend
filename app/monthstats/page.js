@@ -65,10 +65,7 @@ const LeaderBoardMonth = () => {
         accessor: "leaves",
       },
 
-      {
-        Header: "Payment",
-        accessor: "payment",
-      },
+     
     ],
     []
   );

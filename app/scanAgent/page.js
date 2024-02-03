@@ -6,19 +6,19 @@ import Header from "../components/Header";
 import Link from "next/link";
 import MonthSelection from "../components/monthdropdown";
 import YearSelection from "../components/yeardropdown";
-import DialogBox from "../components/Payment";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
+import DialogBox from "../components/salary";
+import DialogBoxforprofile from "../components/profile";
 
-
-const PaymentStats = () => {
+const ScanAgentDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-  const [Month, setMonth] = useState(new Date().getMonth() +1) ;
-  const [Year, setYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const { user } = useUser();
+    
   
-
   useEffect(() => {
     if (user) {
       const userRole = user.publicMetadata.userRole;
@@ -26,7 +26,7 @@ const PaymentStats = () => {
     }
   }, [user]);
 
- 
+
   const columns = useMemo(
     () => [
       {
@@ -40,97 +40,91 @@ const PaymentStats = () => {
         Cell: ({ row }) => {
           const { userId, username } = row.original;
           return (
-            <a href={`/dailystats/${userId}/${Month}/${Year}`} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+            <a href={`/dailystats/${userId}/${selectedMonth}/${selectedYear}`} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
               {username}
             </a>
           );
         },
       },
       {
-        Header: "Total days",
-        accessor: "totalDays",
-      },
-      {
-        Header: "Leaves taken",
-        accessor: "leaves",
-      },
-      
-      {
-        Header: "Payment",
-        accessor: "payment",
-      },
-      {
-        Header: "Status",
-        accessor: "status",
-
-      },
-      {
-        Header: "Action",
-        accessor: "action",
+        Header: "Profile",
+        accessor: "profile",
         Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status,userId,date,singleDaySalary,actualPayment} = row.original;
-          const action = status === "Paid" ? "View" : "Pay";
+          <button onclick={()=>handleButtonClick(row.original)}>Edit</button>
+          const {userId} = row.original;
+          const action = "View";
 
-          const handleButtonClick = () => {
-            fetchData();
-            if (status === "Not Paid") {
-              console.log("Pay Now action triggered");
-
-            } else {
-              console.log("View action triggered");
-
-            }
-          };
 
           return (
-              <DialogBox
+              <DialogBoxforprofile
                   action={action}
                   userId={userId}
-                  username={username}
-                  payment={payment}
-                  singleDaySalary={singleDaySalary}
-                  totalWorkingDays={totalWorkingDays}
-                  leaves={leaves}
-                  status={status}
-                  date={date}
-                  actualPayment = {actualPayment}
-                  handleButtonClick={handleButtonClick}
               />
           );
-        },
       },
+      },
+
+      {
+        Header: "Actual Salary",
+        accessor: "actualPay",
+      },
+        {
+            Header: "Action",
+            accessor: "action",
+            Cell: ({row}) => {
+                <button onclick={()=>handleButtonClick(row.original)}>Edit</button>
+                const {username,userId} = row.original;
+                const action = "Edit";
+
+                const handleButtonClick = () => {
+                    fetchData().then();
+                };
+
+                return (
+                    <DialogBox
+                        action={action}
+                        userId={userId}
+                        username={username}
+                        handleButtonClick={handleButtonClick}
+                    />
+                );
+            },
+        },
+
+
     ],
     []
   );
 
   const fetchData = async () => {
     try {
-      
       setIsLoadingStats(true);
-      
+      console.log(selectedMonth);
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}/${Year}`
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/users/${selectedMonth}/${selectedYear}`
       );
-
-
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      
 
       
       const fetchedData = await response.json();
+    
+        const filteredData = fetchedData.filter((row) => row.username !== null);
+      // Sort the fetched data by the "userName" column in ascending order
+      const sortedData = filteredData.sort((a, b) =>{
+          if(a.username!==null && b.username !==null){
+              return a.username.localeCompare(b.username)
+          }
+          else{
+              return 0;
+          }
+      }
 
-     
-     // Filter out records where username is not null
-    const filteredData = fetchedData.filter(item => item.username != null);
-
-    // Sort the filtered data by username
-    const sortedData = filteredData.sort((a, b) =>
-      a.username.localeCompare(b.username)
-    );
+      );
       setRowData(sortedData);
 
-    
       setIsLoadingStats(false);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -141,14 +135,12 @@ const PaymentStats = () => {
     useTable({ columns, data: rowData }, useSortBy);
 
 
+  useEffect( () => {
+     fetchData().then();
 
-  useEffect(   () => {
+  }, [selectedMonth,selectedYear])
 
-       fetchData();
-
-  }, [Month,Year])
-
- 
+  
 
   return (
     <>
@@ -177,9 +169,10 @@ const PaymentStats = () => {
                 gap: "30px",
               }}
             >
-              <h1 className="text-3xl font-bold text-sky-800 ">Payment Stats</h1>
-              <MonthSelection selectedMonth={Month} setSelectedMonth={setMonth}/>
-              <YearSelection selectedYear={Year} setSelectedYear={setYear}/>
+              <h1 className="text-3xl font-bold text-sky-800 ">ScanAgent Details</h1>
+              <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
+              <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
+            
             </div>
 
             <ScrollArea className=" h-[70vh]  ">
@@ -236,4 +229,4 @@ const PaymentStats = () => {
   );
 };
 
-export default PaymentStats;
+export default ScanAgentDetails;
