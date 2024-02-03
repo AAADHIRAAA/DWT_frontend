@@ -325,7 +325,7 @@ const Header = () => {
                 </h2>
               </Link>
               <div className="my-2 mr-3">
-                <UserButton afterSignOutUrl="/" />
+                <UserButton userProfileMode="navigation"  userProfileUrl="/profile"  afterSignOutUrl="/" />
               </div>
               <div>
                 <button
