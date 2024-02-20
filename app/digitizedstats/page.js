@@ -89,6 +89,10 @@ const SpreadsheetMonth = () => {
         ),
       },
       {
+        Header:"Correction",
+        accessor:"correction"
+      },
+      {
         Header: "Author",
         accessor: "author_name",
       },
