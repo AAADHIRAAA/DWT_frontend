@@ -2,6 +2,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {usePagination, useSortBy, useTable} from "react-table";
 import {useUser} from "@clerk/nextjs";
+import { parseISO, startOfMonth } from 'date-fns';
 import Header from "../components/Header";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,11 +26,11 @@ const SpreadsheetMonth = () => {
     const [hasMore, setHasMore] = useState(true); // Whether more data is available
     const PAGE_SIZE = 50;
     const currentDate = new Date(); 
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);    
+     
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [chartData,setChartData] = useState([]);
-    const formattedStartOfMonth = formatDate(startOfMonth);
-    const formattedCurrentDate = formatDate(currentDate);
+   
+    
 
 function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
@@ -37,7 +38,12 @@ function formatDate(date) {
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
 }
-    console.log(currentDate,startOfMonth,formattedStartOfMonth,formattedCurrentDate);
+   
+    const parsedStartOfMonth = startOfMonth(currentDate); 
+    const formattedCurrentDate = formatDate(currentDate);
+    const formatedstartdate = formatDate(parsedStartOfMonth);
+    console.log(formatedstartdate, formatedstartdate);
+
     useEffect(() => {
         if (user) {
             const userRole = user.publicMetadata.userRole;
@@ -121,8 +127,9 @@ function formatDate(date) {
             const filteredData = fetchedData.filter(entry => {  
                 const date=formatDate(selectedDate);
                 const today =formatDate(currentDate); 
-                console.log(date, today);
-                return entry.date === date || today; // Filter by date
+                const matchdate=formatDate(entry.date);
+                console.log(date, today,entry.date);
+                return matchdate === date || today; // Filter by date
             });
             const pagesScannedByPerson = {};
             filteredData.forEach(entry => {
@@ -146,6 +153,7 @@ function formatDate(date) {
                     return a.username.localeCompare(b.username);
                 }
             });
+            console.log(pieChartData);
             setChartData(pieChartData);
             setFullData(sortedData);
             setVisibleData(sortedData.slice(0, PAGE_SIZE));
@@ -209,16 +217,20 @@ function formatDate(date) {
                     <Header/>
                     <div style={{marginTop: "50px"}}>
                         <h1 className="custom-heading">Daily Stats</h1>
-                        <div className="ml-auto mr-4">
-                        <PieChart data={chartData}/>
-                        <DatePicker
-
-                        selected={selectedDate}
-                        onChange={(date) => handleDateChange(date)}
-                        dateFormat="MM/dd/yyyy"
-                        minDate={formattedCurrentDate}
-                        maxDate={formattedStartOfMonth }
-                        />
+                       
+                        <div className="flex flex-row items-center justify-center">
+                                <div className="mb-4">
+                                    <PieChart data={chartData} />
+                                </div>
+                                <div className="flex justify-center">
+                                    <DatePicker
+                                        selected={selectedDate}
+                                        onChange={handleDateChange}
+                                        dateFormat="MM/dd/yyyy"
+                                        minDate={formatedstartdate}
+                                        maxDate={formattedCurrentDate}
+                                    />
+                                </div>
                         </div>
                         <div  className=" h-[500px]">
                             <table
