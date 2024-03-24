@@ -9,6 +9,9 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {BiChevronUp} from "react-icons/bi";
 import {ScrollArea, ScrollBar} from "@/app/components/ui/scroll-area";
 import {useFlightResponse} from "next/dist/server/app-render/use-flight-response";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import PieChart from "../components/dailystatsGraph";
 
 const SpreadsheetMonth = () => {
     const scrollRef = useRef(null);
@@ -21,7 +24,20 @@ const SpreadsheetMonth = () => {
     const [isLoading, setIsLoading] = useState(false); // Loading indicator
     const [hasMore, setHasMore] = useState(true); // Whether more data is available
     const PAGE_SIZE = 50;
+    const currentDate = new Date(); 
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);    
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [chartData,setChartData] = useState([]);
+    const formattedStartOfMonth = formatDate(startOfMonth);
+    const formattedCurrentDate = formatDate(currentDate);
 
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+}
+    console.log(currentDate,startOfMonth,formattedStartOfMonth,formattedCurrentDate);
     useEffect(() => {
         if (user) {
             const userRole = user.publicMetadata.userRole;
@@ -35,7 +51,7 @@ const SpreadsheetMonth = () => {
         // Clean up the interval when the component unmounts
         return () => clearInterval(intervalId);
     }, []);
-
+   
     const columns = useMemo(
         () => [
             {
@@ -102,7 +118,27 @@ const SpreadsheetMonth = () => {
             // setRowData(data);
             const fetchedData = await response.json();
 
-            // Sort the fetched data by the "scanned_at" date in descending order
+            const filteredData = fetchedData.filter(entry => {  
+                const date=formatDate(selectedDate);
+                const today =formatDate(currentDate); 
+                console.log(date, today);
+                return entry.date === date || today; // Filter by date
+            });
+            const pagesScannedByPerson = {};
+            filteredData.forEach(entry => {
+                const { username, pagesScanned } = entry;
+                if (!pagesScannedByPerson[username]) {
+                    pagesScannedByPerson[username] = 0;
+                }
+                pagesScannedByPerson[username] = pagesScanned;
+            });
+          
+            const pieChartData = Object.keys(pagesScannedByPerson).map(username => {
+                return {
+                    name: username,
+                    pagesScanned: pagesScannedByPerson[username]
+                };
+            });
             const sortedData = fetchedData.sort((a, b) => {
                 if (a.date !== b.date) {
                     return new Date(b.date) - new Date(a.date);
@@ -110,7 +146,7 @@ const SpreadsheetMonth = () => {
                     return a.username.localeCompare(b.username);
                 }
             });
-
+            setChartData(pieChartData);
             setFullData(sortedData);
             setVisibleData(sortedData.slice(0, PAGE_SIZE));
             setIsLoadingStats(false);
@@ -149,6 +185,9 @@ const SpreadsheetMonth = () => {
         });
     };
 
+    const handleDateChange=(date)=>{
+        setSelectedDate(date);
+    }
    
 
     return (
@@ -170,7 +209,17 @@ const SpreadsheetMonth = () => {
                     <Header/>
                     <div style={{marginTop: "50px"}}>
                         <h1 className="custom-heading">Daily Stats</h1>
+                        <div className="ml-auto mr-4">
+                        <PieChart data={chartData}/>
+                        <DatePicker
 
+                        selected={selectedDate}
+                        onChange={(date) => handleDateChange(date)}
+                        dateFormat="MM/dd/yyyy"
+                        minDate={formattedCurrentDate}
+                        maxDate={formattedStartOfMonth }
+                        />
+                        </div>
                         <div  className=" h-[500px]">
                             <table
                                 {...getTableProps()}

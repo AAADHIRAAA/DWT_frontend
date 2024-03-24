@@ -74,7 +74,7 @@ const MonthStats = () => {
               count={publisherCount}
             />
           </div>
-          <div className="flex justify-center mt-10 space-x-4">
+          {/* <div className="flex justify-center mt-10 space-x-4">
             <div
               style={{
                 textAlign: "center",
@@ -177,7 +177,10 @@ const MonthStats = () => {
             </div>
         
             
-          </div>
+          </div> */}
+
+
+          
         </>
       )}
     </>

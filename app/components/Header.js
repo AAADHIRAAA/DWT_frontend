@@ -23,7 +23,38 @@ const Header = () => {
   const [issues, setIssues] = useState("");
   const [userId, setUserId] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isAccountsOpen, setIsAccountsOpen] = useState(false);
+
+  
   const { signOut } = useClerk();
+
+
+  const handleMouseEnter = () => {
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsOpen(false);
+    setIsStatsOpen(false); 
+    setIsAccountsOpen(false); 
+  };
+
+
+  const handleStatsMouseEnter = () => {
+    setIsStatsOpen(true);
+    setIsAccountsOpen(false); 
+  };
+
+
+  const handleAccountsMouseEnter = () => {
+    setIsAccountsOpen(true);
+    setIsStatsOpen(false);
+  };
+
+ 
+  
 
   useEffect(() => {
     if (user) {
@@ -224,11 +255,66 @@ const Header = () => {
             <>
               
               {isAdmin && (
-                <Link href=" /admin" className="mr-4">
-                  <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
-                    Admin Page
+               <div className="relative inline-block">
+                  <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl xl:text-xl cursor-pointer mr-4"
+                      onMouseEnter={handleMouseEnter}
+                      >
+                    Admin
+
                   </h2>
+                  {isOpen && (
+                    <div className="absolute left-0 bg-blue-800 shadow-md py-2 rounded-md text-black"
+                    onMouseLeave={handleMouseLeave}>
+                       <div className="relative">
+            <h3
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
+              onMouseEnter={handleStatsMouseEnter}
+            >
+              Stats
+            </h3>
+            {isStatsOpen && (
+              <div
+                className="absolute top-0 left-full bg-white shadow-md py-2 rounded-md text-black"
+                onMouseLeave={() => setIsStatsOpen(false)}
+              >
+                <Link href="/dailystats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Daily
                 </Link>
+                <Link href="/monthstats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Monthly
+                </Link>
+                <Link href="/digitizedstats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Yearly
+                </Link>
+                
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <h3
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
+              onMouseEnter={handleAccountsMouseEnter}
+            >
+              Accounts
+            </h3>
+            {isAccountsOpen && (
+              <div
+                className="absolute top-0 left-full bg-blue-800 shadow-md py-2 rounded-md text-black"
+                onMouseLeave={() => setIsAccountsOpen(false)}
+              >
+                <Link href="/scanAgent"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Scan Agent
+                </Link>
+                <Link href="/paymentStats"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Payment
+                </Link>
+                {/* <Link href="/holidays"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200" >Holidays
+                </Link> */}
+              </div>
+            )}
+          </div>
+                   
+                    </div>
+                  )}
+                </div>
               )}
               <div className="mr-4">
                 {selectedScribe && (
