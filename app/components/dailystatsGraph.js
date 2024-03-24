@@ -1,54 +1,54 @@
-"use client"
+"use client";
 
-import React, {useState, useEffect, useRef} from 'react';
-import Chart from 'chart.js/auto';
+import React, { useState, useEffect } from "react";
+import { Pie } from "react-chartjs-2";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 
+ChartJS.register(ArcElement, Tooltip, Legend);
+const getRandomColors = (numColors) => {
+  const colors = [];
+  for (let i = 0; i < numColors; i++) {
+    const color = "#" + Math.floor(Math.random() * 16777215).toString(16); // Generate random hex color
+    colors.push(color);
+  }
+  return colors;
+};
 const PieChart = ({ data }) => {
-    const [chart, setChart] = useState(null);
-  
-    const chartRef = useRef(null);
-  
-    useEffect(() => {
-      if (data && data.length > 0) {
-        const labels = data.map(person => person.name);
-        const pagesScanned = data.map(person => person.pagesScanned);
-  
-        const ctx = chartRef.current;
-        if (ctx) {
-          if (chart) {
-            chart.destroy(); // Destroy the previous chart instance
-          }
-          const newChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-              labels,
-              datasets: [{
-                data: pagesScanned,
-                backgroundColor: Chart.helpers.color('#FF5733').alpha(0.6).rgbString(),
-              }],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    label: function(context) {
-                      const label = context.label || '';
-                      const value = context.raw || '';
-                      return `${label}: ${value} pages scanned`;
-                    },
-                  },
-                },
-              },
-            },
-          });
-          setChart(newChart);
-        }
-      }
-    }, [data]);
-  
-    return <canvas id="pie-chart" width="400" height="400" />;
+
+
+  const [labels, setLabels] = useState();
+  const [value, setValue] = useState();
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const labels = data.map((person) => person.name);
+      const pagesScanned = data.map((person) => person.pagesScanned);
+      setLabels(labels);
+      setValue(pagesScanned);
+    }
+  }, [data]);
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        lable: "# of pages",
+        data: value,
+        backgroundColor: getRandomColors(value && value.length),
+      },
+    ],
   };
-  
-  export default PieChart;
+  const chartOptions = {
+    plugins: {
+      legend: {
+        display:true,
+        position:'left' // Hide legend
+      },
+    },
+  };
+
+  return (
+    <Pie data={chartData} className="min-w-[400px] min-h-[400px]" options={chartOptions} />
+  );
+};
+
+export default PieChart;
