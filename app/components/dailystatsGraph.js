@@ -15,15 +15,19 @@ const getRandomColors = (numColors) => {
 };
 const PieChart = ({ data }) => {
 
-
-  const [labels, setLabels] = useState();
-  const [value, setValue] = useState();
+console.log("call");
+  const [labels, setLabels] = useState([]);
+  const [value, setValue] = useState([]);
   useEffect(() => {
     if (data && data.length > 0) {
       const labels = data.map((person) => person.name);
       const pagesScanned = data.map((person) => person.pagesScanned);
       setLabels(labels);
       setValue(pagesScanned);
+    }
+    else{
+      setLabels([]);
+      setValue([]);
     }
   }, [data]);
 

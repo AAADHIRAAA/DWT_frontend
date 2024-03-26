@@ -133,7 +133,7 @@ const DialogBox = () => {
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
         <DialogTrigger className="text-sky-600">
-           <button className={" text-white "}>Set Holidays</button>
+           <button className={" text-black "}>Holidays</button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white">
             <DialogHeader>

@@ -4,12 +4,16 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { useUser } from "@clerk/nextjs";
 import Header from "../components/Header";
 import Link from "next/link";
-import Image from "next/image";
+
 import MonthSelection from "../components/monthdropdown";
 import YearSelection from "../components/yeardropdown";
-import DialogBox from "../components/holidaymonthstats";
+
 import {ScrollArea} from "@/app/components/ui/scroll-area";
-import {clearInterval} from "timers";
+import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import PieChart from "../components/dailystatsGraph";
+
 
 const LeaderBoardMonth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -18,7 +22,9 @@ const LeaderBoardMonth = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const { user } = useUser();
-
+  const currentDate = new Date();
+  const firstDayOfMonth = moment().startOf('month').toDate();
+  const [chartData, setChartData] = useState([]);
   
   useEffect(() => {
     if (user) {
@@ -69,6 +75,7 @@ const LeaderBoardMonth = () => {
     ],
     []
   );
+ 
 
   const fetchData = async () => {
     try {
@@ -84,11 +91,7 @@ const LeaderBoardMonth = () => {
 
       
       const fetchedData = await response.json();
-      // if (fetchedData.length === 0) {
-      //   setRowData([]); // Set rowData to an empty array when no data is available
-      //   setIsLoadingStats(false);
-      //   return;
-      // }
+     
         const filteredData = fetchedData.filter((row) => row.username !== null);
       // Sort the fetched data by the "userName" column in ascending order
       const sortedData = filteredData.sort((a, b) =>{
@@ -103,7 +106,34 @@ const LeaderBoardMonth = () => {
       );
       setRowData(sortedData);
 
+      if (sortedData.length > 0) {
+        const pagesScannedByPerson = {};
+        sortedData.forEach((entry) => {
+          const { username, totalPages } = entry;
+          if (!pagesScannedByPerson[username]) {
+            pagesScannedByPerson[username] = 0;
+          }
+          pagesScannedByPerson[username] = totalPages;
+        });
+  
+        const pieChartData = Object.keys(pagesScannedByPerson).map((username) => {
+          return {
+            name: username,
+            pagesScanned: pagesScannedByPerson[username],
+          };
+        });
+        setChartData(pieChartData);
+   
+  
+        
+      } else {
+        setChartData([]); // Set pie chart data to empty array if sortedData is empty
+    
+      }
+  
+
       setIsLoadingStats(false);
+      console.log(chartData);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -112,14 +142,19 @@ const LeaderBoardMonth = () => {
   const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } =
     useTable({ columns, data: rowData }, useSortBy);
 
+    useEffect(() => {
+    
+      setChartData(chartData);
+
+    }, [chartData]);
 
   useEffect( () => {
      fetchData().then();
 
   }, [selectedMonth,selectedYear])
 
-  
 
+  
   return (
     <>
       {!isAdmin && (
@@ -148,11 +183,18 @@ const LeaderBoardMonth = () => {
               }}
             >
               <h1 className="text-3xl font-bold text-sky-800 ">Month Stats</h1>
+              
               <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
               <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
             
             </div>
-
+            <div className="flex flex-row items-center justify-center">
+              <div className="mb-4 h-full">
+               
+                <PieChart data={chartData} />
+              </div>
+              
+            </div>
             <ScrollArea className=" h-[70vh]  ">
               <table
                 {...getTableProps()}

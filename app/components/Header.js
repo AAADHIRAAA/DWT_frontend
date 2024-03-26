@@ -11,6 +11,7 @@ import {
 } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import DialogBox from "./holidaymonthstats";
 
 const Header = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -255,7 +256,7 @@ const Header = () => {
             <>
               
               {isAdmin && (
-               <div className="relative inline-block">
+               <div className="relative inline-block" style={{ zIndex: 9999}}>
                   <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl xl:text-xl cursor-pointer mr-4"
                       onMouseEnter={handleMouseEnter}
                       >
@@ -263,7 +264,7 @@ const Header = () => {
 
                   </h2>
                   {isOpen && (
-                    <div className="absolute left-0 bg-blue-800 shadow-md py-2 rounded-md text-black"
+                    <div className="absolute left-0  shadow-md py-2 rounded-md text-black"
                     onMouseLeave={handleMouseLeave}>
                        <div className="relative">
             <h3
@@ -296,7 +297,7 @@ const Header = () => {
             </h3>
             {isAccountsOpen && (
               <div
-                className="absolute top-0 left-full bg-blue-800 shadow-md py-2 rounded-md text-black"
+                className="absolute top-0 left-full justify-center shadow-md py-2 rounded-md text-black"
                 onMouseLeave={() => setIsAccountsOpen(false)}
               >
                 <Link href="/scanAgent"
@@ -308,6 +309,7 @@ const Header = () => {
                 {/* <Link href="/holidays"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-200" >Holidays
                 </Link> */}
+                <div className="block px-4 py-2 text-gray-800 hover:bg-gray-200" ><DialogBox/></div>
               </div>
             )}
           </div>

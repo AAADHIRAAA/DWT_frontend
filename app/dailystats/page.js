@@ -1,19 +1,18 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { usePagination, useSortBy, useTable } from "react-table";
+import { useSortBy, useTable,useGlobalFilter } from "react-table";
 import { useUser } from "@clerk/nextjs";
-import { parseISO, startOfMonth } from "date-fns";
+
 import Header from "../components/Header";
 import Image from "next/image";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { BiChevronUp } from "react-icons/bi";
-import { ScrollArea, ScrollBar } from "@/app/components/ui/scroll-area";
-import { useFlightResponse } from "next/dist/server/app-render/use-flight-response";
+import { Globalfilter } from "../components/Globalfilter";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PieChart from "../components/dailystatsGraph";
-import { Pie } from "react-chartjs-2";
+
 
 import moment from "moment";
 
@@ -22,27 +21,26 @@ const SpreadsheetMonth = () => {
   const [rowData, setRowData] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useUser();
-  const [isLoadingStats, setIsLoadingStats] = useState(true);
+ 
   const [fullData, setFullData] = useState([]); // Store all the data
   const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
-  const [isLoading, setIsLoading] = useState(false); // Loading indicator
+
   const [hasMore, setHasMore] = useState(true); // Whether more data is available
   const PAGE_SIZE = 50;
   const currentDate = new Date();
-
+  const firstDayOfMonth = moment().startOf('month').toDate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [chartData, setChartData] = useState([]);
 
-  function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  }
+  // function formatDate(date) {
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const year = date.getFullYear();
+  //   return `${month}/${day}/${year}`;
+  // }
 
-  const parsedStartOfMonth = startOfMonth(currentDate);
-  const formattedCurrentDate = moment(currentDate);
-  const formatedstartdate = moment(parsedStartOfMonth);
+ 
+ 
 
   useEffect(() => {
     if (user) {
@@ -108,7 +106,18 @@ const SpreadsheetMonth = () => {
     ],
     []
   );
-
+  const filterByDates = (rows, columnIds, filterValue) => {
+    return rows.filter((row) => {
+      return columnIds.some((columnId) => {
+        const rowValue = row.values[columnId];
+        if (rowValue) {
+          const formattedDate = new Date(rowValue).toLocaleDateString("en-US");
+          return formattedDate.includes(filterValue);
+        }
+        return false;
+      });
+    });
+  };
   useEffect(() => {
     const filteredData = rowData.filter((entry) => {
       const date = moment(selectedDate);
@@ -135,7 +144,7 @@ const SpreadsheetMonth = () => {
 
   const fetchData = async () => {
     try {
-      setIsLoadingStats(true);
+    
 
       const response = await fetch(
         "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats"
@@ -147,9 +156,11 @@ const SpreadsheetMonth = () => {
       // const data = await response.json();
       // setRowData(data);
       const fetchedData = await response.json();
-      setRowData(fetchedData);
+      const filteredData = fetchedData.filter(entry => entry.pagesScanned > 0 && entry.booksScanned > 0);
+      setRowData(filteredData);
 
-      const sortedData = fetchedData.sort((a, b) => {
+      
+      const sortedData = filteredData.sort((a, b) => {
         if (a.date !== b.date) {
           return new Date(b.date) - new Date(a.date);
         } else {
@@ -159,7 +170,7 @@ const SpreadsheetMonth = () => {
 
       setFullData(sortedData);
       setVisibleData(sortedData.slice(0, PAGE_SIZE));
-      setIsLoadingStats(false);
+     
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -172,8 +183,16 @@ const SpreadsheetMonth = () => {
     setHasMore(currentLength + PAGE_SIZE < fullData.length);
   };
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: visibleData }, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow ,state: { globalFilter },
+  setGlobalFilter} =
+    useTable({ columns, data: visibleData ,filterTypes: {
+      datetime: filterByDates,
+    }},
+     useGlobalFilter,
+      useSortBy
+      );
+
+
   const scrollToBottom = () => {
     window.scrollTo({
       top: document.body.scrollHeight,
@@ -221,11 +240,19 @@ const SpreadsheetMonth = () => {
                   selected={selectedDate}
                   onChange={handleDateChange}
                   dateFormat="dd/MM/yyyy"
-                  minDate={formatedstartdate}
-                  maxDate={formattedCurrentDate}
+                  minDate={firstDayOfMonth}
+                  maxDate={currentDate}
                 />
+                
               </div>
             </div>
+            <div className="flex justify-end mb-4 text-sky-800 mr-8">
+            <Globalfilter
+              filter={globalFilter}
+              setFilter={setGlobalFilter}
+              className="mr-8"
+            />
+          </div>
             <div className=" h-[500px]">
               <table
                 {...getTableProps()}
