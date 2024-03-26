@@ -45,6 +45,7 @@ const SpreadsheetMonth = () => {
   const columns = useMemo(
     () => [
       {
+        
         Header: "S.No",
         accessor: (row, index) => index + 1,
       },
@@ -256,7 +257,7 @@ const SpreadsheetMonth = () => {
               <table
                 {...getTableProps()}
                 className=" divide-y divide-gray-200 table"
-                style={{ width: "90%", tableLayout: "fixed" }}
+                style={{ maxWidth: "90%"}}
               >
                 <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (

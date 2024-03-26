@@ -12,7 +12,7 @@ import {ScrollArea} from "@/app/components/ui/scroll-area";
 import {clearInterval} from "timers";
 
 const Holiday = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() +1) ;
@@ -21,14 +21,6 @@ const Holiday = () => {
   const [message, setMessage]=useState("");
 
   
-  useEffect(() => {
-    if (user) {
-      const userRole = user.publicMetadata.userRole;
-      setIsAdmin(userRole === "admin");
-    }
-  }, [user]);
-
-
   const columns = useMemo(
     () => [
       {
@@ -103,20 +95,7 @@ const Holiday = () => {
   
 
   return (
-    <>
-      {!isAdmin && (
-        <>
-          <div style={{ textAlign: "center", marginTop: "60px" }}>
-            <h1 style={{ fontSize: "30px", color: "black" }}>
-              This Page is restricted
-            </h1>
-          </div>
-          <div style={{ textAlign: "center", marginTop: "60px" }}>
-            <Link href="/workreport">Return to Homepage</Link>
-          </div>
-        </>
-      )}
-      {isAdmin && (
+   
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
@@ -188,8 +167,7 @@ const Holiday = () => {
             </ScrollArea>
            
           </div>
-        </>
-      )}
+      
     </>
   );
 };

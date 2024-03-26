@@ -8,23 +8,23 @@ import { useUser } from "@clerk/nextjs";
 
 const MonthStats = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [booksScanned, setBooksScanned] = useState(0);
-  const [pagesScanned, setPagesScanned] = useState(0);
-  const [authorCount, setAuthorCount] = useState(0);
-  const [publisherCount, setPublisherCount] = useState(0);
+  const [booksScannedMonth, setBooksScannedMonth] = useState(0);
+  const [pagesScannedMonth, setPagesScannedMonth] = useState(0);
+  const [authorCountMonth, setAuthorCountMonth] = useState(0);
+  const [publisherCountMonth, setPublisherCountMonth] = useState(0);
   const { user } = useUser();
 
-  const fetchData = async () => {
+  const fetchDataMonth = async () => {
     try {
       const response = await fetch(
         "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/statistics-for-month"
       );
       const data = await response.json();
       console.log("Fetched data:", data);
-      setBooksScanned(data.booksScannedThisMonth);
-      setPagesScanned(data.pagesScannedThisMonth);
-      setAuthorCount(data.distinctAuthorsThisMonth);
-      setPublisherCount(data.distinctPublishersThisMonth);
+      setBooksScannedMonth(data.booksScannedThisMonth);
+      setPagesScannedMonth(data.pagesScannedThisMonth);
+      setAuthorCountMonth(data.distinctAuthorsThisMonth);
+      setPublisherCountMonth(data.distinctPublishersThisMonth);
     } catch (error) {
       console.error("Error fetching statistics:", error);
     }
@@ -38,7 +38,7 @@ const MonthStats = () => {
   }, [user]);
   // Use the useEffect hook to fetch data when the component mounts
   useEffect(() => {
-    fetchData();
+    fetchDataMonth();
 
     // Fetch data every minute (adjust the interval as needed)
     const intervalId = setInterval(fetchData, 60 * 1000);
@@ -74,7 +74,7 @@ const MonthStats = () => {
               count={publisherCount}
             />
           </div>
-          <div className="flex justify-center mt-10 space-x-4">
+          {/* <div className="flex justify-center mt-10 space-x-4">
             <div
               style={{
                 textAlign: "center",
@@ -177,7 +177,10 @@ const MonthStats = () => {
             </div>
         
             
-          </div>
+          </div> */}
+
+
+          
         </>
       )}
     </>
