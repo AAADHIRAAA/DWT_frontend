@@ -397,7 +397,6 @@ const Header = () => {
                   </h2>
                 )}
               </div>
-
               {isAdmin && (
                 // <Link href=" /admin" className="mr-3">
                 //   <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl  xl:text-xl">
@@ -406,6 +405,9 @@ const Header = () => {
                 // </Link>
                 <div className="relative inline-block " style={{ zIndex: 9999}}>
                   <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl xl:text-xl cursor-pointer mr-4 "
+ {isAdmin && (
+               <div className="relative inline-block" style={{ zIndex: 9999}}>
+                  <h2 className="mb-3 text-sky-800 text-lg sm:text-xl md:text-xl xl:text-xl cursor-pointer mr-4"
                       onMouseEnter={handleMouseEnter}
                       >
                     Admin
@@ -413,6 +415,7 @@ const Header = () => {
                   </h2>
                   {isOpen && (
                     <div className="absolute left-0  shadow-md py-2 rounded-md text-black font-bold bg-sky-200"
+                    <div className="absolute left-0  shadow-md py-2 rounded-md text-blac
                     onMouseLeave={handleMouseLeave}>
                        <div className="relative">
             <h3
@@ -454,17 +457,51 @@ const Header = () => {
                 <Link href="/paymentStats"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Payment
                 </Link>
+                className="absolute top-0 left-full bg-white shadow-md py-2 rounded-md text-black"
+                onMouseLeave={() => setIsStatsOpen(false)}
+              >
+                <Link href="/dailystats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Daily
+                </Link>
+                <Link href="/monthstats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Monthly
+                </Link>
+                <Link href="/digitizedstats" className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Yearly
+                </Link>
+                
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <h3
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
+              onMouseEnter={handleAccountsMouseEnter}
+            >
+              Accounts
+            </h3>
+            {isAccountsOpen && (
+              <div
+                className="absolute top-0 left-full justify-center shadow-md py-2 rounded-md text-black"
+                onMouseLeave={() => setIsAccountsOpen(false)}
+              >
+                <Link href="/scanAgent"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Scan Agent
+                </Link>
+                <Link href="/paymentStats"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200">Payment
+                </Link>
+
                 {/* <Link href="/holidays"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-200" >Holidays
                 </Link> */}
                 <div className="block px-4 py-2 text-gray-800 hover:bg-gray-200" ><DialogBox/></div>
               </div>
             )}
+
           </div>         
         </div>
             )}
                 </div>
               )}
+
                
 
               <Link href="/workreport" className="mr-3 ">
