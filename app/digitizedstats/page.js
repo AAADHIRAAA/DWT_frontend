@@ -12,20 +12,22 @@ import Header from "../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { Globalfilter } from "../components/Globalfilter";
-
+import YearSelection from "../components/yeardropdown";
 import {BiChevronDown, BiChevronUp} from "react-icons/bi";
-
-const SpreadsheetMonth = () => {
+import PieChart from "../components/dailystatsGraph";
+const ScansForYear = () => {
+  const currentYear = new Date().getFullYear();
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useUser();
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-
+  const [selectedYear, setSelectedYear]= useState(currentYear);
   const [fullData, setFullData] = useState([]); // Store all the data
   const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
   const [isLoading, setIsLoading] = useState(false); // Loading indicator
   const [hasMore, setHasMore] = useState(true); // Whether more data is available
   const PAGE_SIZE = 50;
   const tableRef = useRef(null);
+  const [chartData, setChartData]= useState([]);
 
   useEffect(() => {
     if (user) {
@@ -117,6 +119,31 @@ const SpreadsheetMonth = () => {
     []
   );
 
+  const fetchYearStats = async()=>{
+    try{
+      const response = await fetch(
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/getStatisticsForYear/${selectedYear}`
+      );
+      if(!response.ok){
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const fetchedData = await response.json();
+      console.log(fetchedData);
+      if (fetchedData.pagesScannedThisYear && fetchedData.pagesScannedThisYear.length > 0) {
+        const pieChartData = fetchedData.pagesScannedThisYear.map((item) => ({
+          name: item.month,
+          pagesScanned: item.count
+        }));
+        setChartData(pieChartData);
+    } else {
+      setChartData([]);
+     }   
+    
+    }catch(error){
+      console.error("Error fetching data:", error.message);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
@@ -172,6 +199,16 @@ const SpreadsheetMonth = () => {
             fetchMoreData();
         }
     };
+
+    useEffect(()=>{
+      fetchYearStats().then();
+    },[selectedYear]);
+
+    useEffect(() => {
+    
+      setChartData(chartData);
+
+    }, [chartData]);
 
     useEffect(() => {
         const element = tableRef.current;
@@ -244,6 +281,14 @@ const SpreadsheetMonth = () => {
           <div style={{ marginTop: "50px" }}>
             <h1 className="custom-heading">Digitized Books Stats</h1>
           </div>
+          <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
+          <div className="flex flex-row items-center justify-center">
+              <div className="mb-4 h-full">
+               
+                <PieChart data={chartData} />
+              </div>
+              
+            </div>
 
           <div className="flex justify-end mb-4 text-sky-800 mr-8">
             <Globalfilter
@@ -324,4 +369,4 @@ const SpreadsheetMonth = () => {
   );
 };
 
-export default SpreadsheetMonth;
+export default ScansForYear;

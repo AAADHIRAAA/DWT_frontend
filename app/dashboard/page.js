@@ -79,15 +79,15 @@ const Dashboard = () => {
         <DashboardContainer title="Author Count" count={authorCount} total={authorCountMonth}/>
         <DashboardContainer title="Publisher Count" count={publisherCount} total={publisherCountMonth}/>
       </div>
-
-      <div className="mt-8 mb-12 flex flex-col gap-3">
-      <h3 className="custom-heading">Month Leaderboard</h3>
-        <MonthLeaderBoard/>
-      </div>
       <div className="mt-8 mb-12 flex-col gap-3">
       <h3 className="custom-heading">Daily Leaderboard</h3>
         <LeaderBoard />
       </div>
+      <div className="mt-8 mb-12 flex flex-col gap-3">
+      <h3 className="custom-heading">Month Leaderboard</h3>
+        <MonthLeaderBoard/>
+      </div>
+      
       <h3 className="custom-heading">Previous Day Stats</h3>
 
       <div style={{ textAlign: "center", marginTop: "10px" }}>
