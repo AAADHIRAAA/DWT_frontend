@@ -20,7 +20,7 @@ const DashboardContainer = ({ title, count,total}) => {
     }}>
       <h3 style={{ fontWeight:'bolder',textAlign:'center',color:'#075985',marginBottom:'30px',marginTop:'10px',fontSize:'27px'}}>{title}</h3>
       <p style={{textAlign:"center",fontSize:'30px'}}>{count}</p>
-      {total && (<p style={{textAlign:"center", fontSize:'15px'}}>Total- till-date: {total}</p>)}
+      {total && (<p style={{textAlign:"center", fontSize:'15px'}}>This Month: {total}</p>)}
 
   </div>
     </>
