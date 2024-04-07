@@ -8,8 +8,8 @@ const PrevDay = () => {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   useEffect(() => {
     fetchData();
-    // Fetch data every day (adjust the interval as needed)
-    const intervalId = setInterval(fetchData, 24 * 60 * 60 * 1000);
+
+    const intervalId = setInterval(fetchData, 60 * 1000);
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
