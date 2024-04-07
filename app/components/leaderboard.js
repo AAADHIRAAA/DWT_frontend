@@ -60,10 +60,10 @@ const LeaderBoard = () => {
 
       // Sort the fetched data by the "scanned_at" date in descending order
       const sortedData = fetchedData.sort((a, b) => {
-        if (a.totalBooks !== b.totalBooks) {
-          return b.totalBooks - a.totalBooks;
-        } else {
+        if (a.totalPages !== b.totalPages) {
           return b.totalPages - a.totalPages;
+        } else {
+          return b.username - a.username;
         }
       });
 

@@ -15,6 +15,8 @@ import { Globalfilter } from "../components/Globalfilter";
 import YearSelection from "../components/yeardropdown";
 import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 import PieChart from "../components/dailystatsGraph";
+import LineGraph from "../components/lineGraph";
+
 const ScansForYear = () => {
   const currentYear = new Date().getFullYear();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -28,6 +30,7 @@ const ScansForYear = () => {
   const PAGE_SIZE = 50;
   const tableRef = useRef(null);
   const [chartData, setChartData]= useState([]);
+  const [lineData, setLineData]= useState([]);
 
   useEffect(() => {
     if (user) {
@@ -144,6 +147,32 @@ const ScansForYear = () => {
     }
   };
 
+  const fetchAllYearStats = async()=>{
+    try{
+      console.log("year");
+      const response = await fetch(
+        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/getYearlyStatistics`
+      );
+      if(!response.ok){
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const fetchedData = await response.json();
+      console.log(fetchedData);
+      if (fetchedData.pagesScannedThisYear && fetchedData.pagesScannedThisYear.length > 0) {
+        const LineChartData = fetchedData.pagesScannedThisYear.map((item) => ({
+          year: item.year,
+          data: item.data.map(month=>month.count)
+        }));
+        setLineData(LineChartData);
+    } else {
+      setLineData([]);
+     }   
+    
+    }catch(error){
+      console.error("Error fetching data:", error.message);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
@@ -204,10 +233,14 @@ const ScansForYear = () => {
       fetchYearStats().then();
     },[selectedYear]);
 
+    // useEffect(()=>{
+    //   fetchAllYearStats().then();
+    //   console.log(lineData);
+    // },[]);
     useEffect(() => {
     
       setChartData(chartData);
-
+      console.log(chartData);
     }, [chartData]);
 
     useEffect(() => {
@@ -286,6 +319,13 @@ const ScansForYear = () => {
               <div className="mb-4 h-full">
                
                 <PieChart data={chartData} />
+              </div>
+              
+            </div>
+            <div className="flex flex-row items-center justify-center">
+              <div className="mb-4 h-full">
+               
+                {/* <LineGraph data ={lineData}/> */}
               </div>
               
             </div>

@@ -52,13 +52,18 @@ const Dashboard = () => {
   // Use the useEffect hook to fetch data when the component mounts
   useEffect(() => {
     fetchData();
-    fetchDataMonth();
     // Fetch data every minute (adjust the interval as needed)
     const intervalId = setInterval(fetchData, 60 * 1000);
-
+    
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(()=>{
+    fetchDataMonth();
+    const interval = setInterval(fetchDataMonth, 60*1000);
+    return ()=> clearInterval(interval);
+  },[]);
 
   const scrollToBottom = () => {
     window.scrollTo({

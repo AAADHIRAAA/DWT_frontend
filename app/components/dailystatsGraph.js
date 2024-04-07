@@ -45,7 +45,22 @@ console.log("call");
     plugins: {
       legend: {
         display:true,
-        position:'left' // Hide legend
+        position:'left',
+        labels: {
+          generateLabels: function(chart) {
+            const data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              return data.labels.map(function(label, index) {
+                const value = data.datasets[0].data[index];
+                return {
+                  text: `${label}: ${value}`, 
+                  fillStyle: data.datasets[0].backgroundColor[index],
+                };
+              });
+            }
+            return [];
+          }
+        } 
       },
     },
   };
