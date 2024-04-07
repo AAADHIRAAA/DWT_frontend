@@ -15,7 +15,8 @@ import { Globalfilter } from "../components/Globalfilter";
 import YearSelection from "../components/yeardropdown";
 import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 import PieChart from "../components/dailystatsGraph";
-import LineGraph from "../components/lineGraph";
+import YearlyStats from "../components/yearlystatstable";
+// import LineGraph from "../components/lineGraph";
 
 const ScansForYear = () => {
   const currentYear = new Date().getFullYear();
@@ -312,24 +313,29 @@ const ScansForYear = () => {
         <>
           <Header />
           <div style={{ marginTop: "50px" }}>
-            <h1 className="custom-heading">Digitized Books Stats</h1>
+            <h1 className="custom-heading">Yearly Stats</h1>
           </div>
-          <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
           <div className="flex flex-row items-center justify-center">
-              <div className="mb-4 h-full">
+              <div className="mb-8 h-full">
+               
+                {/* <LineGraph data ={lineData}/> */}
+                <YearlyStats/>
+              </div>
+              
+            </div>
+          
+          <div className="flex flex-row items-center justify-center">
+          <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
+              <div className="mb-4 ml-8 h-full">
                
                 <PieChart data={chartData} />
               </div>
               
             </div>
-            <div className="flex flex-row items-center justify-center">
-              <div className="mb-4 h-full">
-               
-                {/* <LineGraph data ={lineData}/> */}
-              </div>
-              
-            </div>
-
+           
+            <div style={{ marginTop: "50px" }}>
+            <h1 className="custom-heading">Digitization Books Stats</h1>
+          </div>
           <div className="flex justify-end mb-4 text-sky-800 mr-8">
             <Globalfilter
               filter={globalFilter}
