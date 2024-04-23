@@ -10,7 +10,7 @@ const MonthLeaderBoard = () => {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 60 * 1000);
+    const intervalId = setInterval(fetchData, 60 * 10 * 1000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);

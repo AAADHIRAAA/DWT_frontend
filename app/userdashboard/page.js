@@ -15,7 +15,7 @@ const UserDashboard = () => {
       setUserId(user.id);
     }
     fetchData();
-    const intervalId = setInterval(fetchData, 0.5 * 60 * 1000);
+    const intervalId = setInterval(fetchData, 10 * 60 * 1000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
