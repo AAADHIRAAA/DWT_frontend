@@ -96,7 +96,7 @@ const DialogBox = ({
             };
             console.log(data)
             const response = await fetch(
-                "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/payment",
+                "https://trackserv.techfiz.com/api/v1/admin/payment",
                 {
                     method: "POST",
                     headers: {

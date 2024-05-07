@@ -96,7 +96,7 @@ const SpreadsheetMonth = (req,res) => {
             setIsLoadingStats(true);
                 console.log("data");
             const response = await fetch(
-                `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewdailystats/${userId}/${selectedMonth}/${selectedYear}`
+                `https://trackserv.techfiz.com/api/v1/admin/viewdailystats/${userId}/${selectedMonth}/${selectedYear}`
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

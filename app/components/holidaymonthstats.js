@@ -59,7 +59,7 @@ const DialogBox = () => {
     };
 
     const getHolidays = async () => {
-        const response = await fetch(`https://digitized-work-tracker-backend.vercel.app/api/v1/admin/monthlyholidays/${selectedMonth}/${selectedYear}`)
+        const response = await fetch(`https://trackserv.techfiz.com/api/v1/admin/monthlyholidays/${selectedMonth}/${selectedYear}`)
         console.log("HOLIDAY");
         console.log(selectedYear,selectedMonth);
         if (!response.ok) {
@@ -98,7 +98,7 @@ const DialogBox = () => {
             };
 
             console.log(selectedYear,selectedMonth);
-            const response = await fetch("https://digitized-work-tracker-backend.vercel.app/api/v1/admin/month", {
+            const response = await fetch("https://trackserv.techfiz.com/api/v1/admin/month", {
                 method: "POST", headers: {
                     "Content-Type": "application/json",
                 }, body: JSON.stringify(data),

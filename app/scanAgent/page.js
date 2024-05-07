@@ -101,7 +101,7 @@ const ScanAgentDetails = () => {
       setIsLoadingStats(true);
       console.log(selectedMonth);
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/users/${selectedMonth}/${selectedYear}`
+        `https://trackserv.techfiz.com/api/v1/admin/users/${selectedMonth}/${selectedYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

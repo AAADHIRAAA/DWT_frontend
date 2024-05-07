@@ -45,7 +45,7 @@ const MonthLeaderBoard = () => {
       setIsLoadingStats(true);
 
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${currentMonth}/${currentYear}`
+        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${currentMonth}/${currentYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

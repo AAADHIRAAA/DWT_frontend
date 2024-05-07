@@ -22,7 +22,7 @@ const DialogBoxforprofile = ({
         try {
             console.log("call");
             const response = await fetch(
-              `https://digitized-work-tracker-backend.vercel.app/api/v1/users/getprofile/${userId}`
+              `https://trackserv.techfiz.com/api/v1/users/getprofile/${userId}`
             );
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);

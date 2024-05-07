@@ -126,7 +126,7 @@ const ScansForYear = () => {
   const fetchYearStats = async()=>{
     try{
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/getStatisticsForYear/${selectedYear}`
+        `https://trackserv.techfiz.com/api/v1/admin/getStatisticsForYear/${selectedYear}`
       );
       if(!response.ok){
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -152,7 +152,7 @@ const ScansForYear = () => {
     try{
       console.log("year");
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/getYearlyStatistics`
+        `https://trackserv.techfiz.com/api/v1/admin/getYearlyStatistics`
       );
       if(!response.ok){
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -179,7 +179,7 @@ const ScansForYear = () => {
       setIsLoadingStats(true);
 
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/viewbooks-month"
+        "https://trackserv.techfiz.com/api/v1/admin/viewbooks-month"
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

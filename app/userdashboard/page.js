@@ -26,7 +26,7 @@ const UserDashboard = () => {
       setIsLoadingStats(true);
       if (userId) {
         const response = await fetch(
-          `https://digitized-work-tracker-backend.vercel.app/api/v1/users/user-today-statistics/${userId}`
+          `https://trackserv.techfiz.com/api/v1/users/user-today-statistics/${userId}`
         );
         const data = await response.json();
         console.log("Fetched data:", data);

@@ -46,7 +46,7 @@ const Holiday = () => {
       setIsLoadingStats(true);
       console.log(selectedMonth);
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/users/view-holidays"
+        "https://trackserv.techfiz.com/api/v1/users/view-holidays"
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

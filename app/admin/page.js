@@ -17,7 +17,7 @@ const MonthStats = () => {
   const fetchDataMonth = async () => {
     try {
       const response = await fetch(
-        "https://digitized-work-tracker-backend.vercel.app/api/v1/admin/statistics-for-month"
+        "https://trackserv.techfiz.com/api/v1/admin/statistics-for-month"
       );
       const data = await response.json();
       console.log("Fetched data:", data);

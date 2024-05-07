@@ -109,7 +109,7 @@ const PaymentStats = () => {
       setIsLoadingStats(true);
       
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/leaderboard-month/${Month}/${Year}`
+        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${Month}/${Year}`
       );
 
 

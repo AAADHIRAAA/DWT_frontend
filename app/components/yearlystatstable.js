@@ -78,7 +78,7 @@ const YearlyStats = () => {
   const fetchAllYearStats = async () => {
     try {
       const response = await fetch(
-        `https://digitized-work-tracker-backend.vercel.app/api/v1/admin/getYearlyStatistics`
+        `https://trackserv.techfiz.com/api/v1/admin/getYearlyStatistics`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

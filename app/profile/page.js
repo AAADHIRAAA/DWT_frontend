@@ -66,7 +66,7 @@ const formSchema = z.object({
         try {
           
           const response = await fetch(
-            `https://digitized-work-tracker-backend.vercel.app/api/v1/users/getprofile/${user.id}`
+            `https://trackserv.techfiz.com/api/v1/users/getprofile/${user.id}`
           );
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -107,7 +107,7 @@ const formSchema = z.object({
         try {
           
             console.log(values);
-            await axios.post("https://digitized-work-tracker-backend.vercel.app/api/v1/users/profile", {
+            await axios.post("https://trackserv.techfiz.com/api/v1/users/profile", {
                 userId: user.id,
                 ...values, // Send all form values to the backend API
             
