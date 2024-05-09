@@ -125,7 +125,7 @@ const formSchema = z.object({
      <Header/>
     <Card className="w-fit  mx-auto mt-20 text-white bg-sky-900">
     <CardHeader>
-        <CardTitle className='mx-auto'>Profile</CardTitle>
+        <CardTitle className='mx-auto'>{user && user.firstName}'s Profile</CardTitle>
        
     </CardHeader>
     <CardContent className='mt-20 text-lg'>
