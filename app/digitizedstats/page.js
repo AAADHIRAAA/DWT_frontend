@@ -324,14 +324,14 @@ const ScansForYear = () => {
               
             </div>
           
-          <div className="flex flex-row items-center justify-center">
+          {/* <div className="flex flex-row items-center justify-center">
           <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
               <div className="mb-4 ml-8 h-full">
                
                 <PieChart data={chartData} />
               </div>
               
-            </div>
+            </div> */}
            
             <div style={{ marginTop: "50px" }}>
             <h1 className="custom-heading">Digitization Books Stats</h1>

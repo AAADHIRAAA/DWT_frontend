@@ -39,7 +39,7 @@ const ScribeSelection = () => {
           style={{ width: '100%', padding: '10px', margin: '10px 0', borderRadius: '4px', border: '1px solid #ccc' }}
         >
           <option value="">Select</option>
-          {[...Array(23).keys()].map((num) => (
+          {[...Array(30).keys()].map((num) => (
             <option key={num + 1} value={`ttscribe ${num + 1}`}>
               ttscribe {num + 1}
             </option>

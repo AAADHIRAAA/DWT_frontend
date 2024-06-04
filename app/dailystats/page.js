@@ -230,7 +230,7 @@ const SpreadsheetMonth = () => {
           <div style={{ marginTop: "50px" }}>
             <h1 className="custom-heading">Daily Stats</h1>
 
-            <div className="flex flex-row items-center justify-center">
+            {/* <div className="flex flex-row items-center justify-center">
               <div className="mb-4 h-full">
                
                 <PieChart data={chartData} />
@@ -245,7 +245,7 @@ const SpreadsheetMonth = () => {
                 />
                 
               </div>
-            </div>
+            </div> */}
             <div className="flex justify-end mb-4 text-sky-800 mr-8">
             <Globalfilter
               filter={globalFilter}

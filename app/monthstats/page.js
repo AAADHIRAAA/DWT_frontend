@@ -188,13 +188,13 @@ const LeaderBoardMonth = () => {
               <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>
             
             </div>
-            <div className="flex flex-row items-center justify-center">
+            {/* <div className="flex flex-row items-center justify-center">
               <div className="mb-4 h-full">
                
                 <PieChart data={chartData} />
               </div>
               
-            </div>
+            </div> */}
             <ScrollArea className=" h-[70vh]  ">
               <table
                 {...getTableProps()}
