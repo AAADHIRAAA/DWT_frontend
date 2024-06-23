@@ -3,20 +3,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import {Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger,} from "@/app/components/ui/dialog"
 import Image from "next/image";
 
-const DialogBox = ({
+const DialogBoxForLocation = ({
                        action,
                        userId,
                        username,
                        handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [salary, setSalary] = useState(0);
+    const [location, setLocation] = useState("");
 
-    const handleSalaryChange=(e)=>{
-        if (!isNaN(Number(e))) {
-            setSalary(Number(e));
-           
-        }
+    const handleLocationChange=(e)=>{
+        setLocation(e);
     }
 
     const handleSubmit = async () => {
@@ -26,11 +23,11 @@ const DialogBox = ({
             const data = {
                 userId:userId,
                 username:username,
-                actualPay:salary,
+                location:location,
             };
             console.log(data)
             const response = await fetch(
-                "https://trackserv.techfiz.com/api/v1/admin/actualPay",
+                "https://trackserv.techfiz.com/api/v1/admin/location",
                 {
                     method: "POST",
                     headers: {
@@ -53,24 +50,27 @@ const DialogBox = ({
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
             <DialogTrigger className="text-sky-600">
-                <button ><Image src={"/edit.jpg"} width={40} height={50}/></button>
+                <button ><Image src={"/assign.jpg"} width={40} height={50}/></button>
 
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white">
                 <DialogHeader>
-                    <DialogTitle> Edit Actual Salary</DialogTitle>
+                    <DialogTitle> Change Location</DialogTitle>
 
                 </DialogHeader>
                 <div className="text-sky-800">
                     <p>ScanAgent Name: {username}</p>
                     <div className="grid grid-cols gap-4">
-                                                        <label>Enter Actual Salary: </label>
-                                                        <input
-                                                            autoFocus
+                                                        <label>Assign Location: </label>
+                                                        <select
                                                             className="border border-gray-300 rounded-md p-1 col-span-2"
-                                                            value={salary}
-                                                            onChange={(e)=> handleSalaryChange(e.target.value)}
-                                                        ></input>
+                                                            value={location}
+                                                            onChange={(e) => handleLocationChange(e.target.value)}
+                                                            >
+                                                            <option value="" hidden>Select location</option>
+                                                            <option value="Gandhi Bhavan">Gandhi Bhavan</option>
+                                                            <option value="Lalbagh Botanical Garden">Lalbagh Botanical Garden</option>
+                                                        </select>
                                                     </div>
                 </div>
                 <DialogFooter>
@@ -87,4 +87,4 @@ const DialogBox = ({
 
 };
 
-export default DialogBox;
+export default DialogBoxForLocation;

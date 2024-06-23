@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTable, useSortBy } from "react-table";
 
-const LeaderBoard = () => {
+const LeaderBoard = ({location}) => {
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
@@ -11,7 +11,7 @@ const LeaderBoard = () => {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, []);
+  }, [location]);
 
   const columns = useMemo(
     () => [
@@ -48,7 +48,7 @@ const LeaderBoard = () => {
       setIsLoadingStats(true);
 
       const response = await fetch(
-        "https://trackserv.techfiz.com/api/v1/books/leaderboard"
+        `https://trackserv.techfiz.com/api/v1/books/leaderboard/${location}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

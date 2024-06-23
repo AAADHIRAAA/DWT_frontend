@@ -6,6 +6,7 @@ import DashboardContainer from "../components/dashboardContainer";
 import LeaderBoard from "../components/leaderboard";
 import PrevDay from "../prevday/page";
 import MonthLeaderBoard from "../components/monthleaderboard";
+import FilterOptions from "../components/locationFilter";
 
 const Dashboard = () => {
   const [booksScanned, setBooksScanned] = useState(0);
@@ -16,7 +17,7 @@ const Dashboard = () => {
   const [pagesScannedMonth, setPagesScannedMonth] = useState(0);
   const [authorCountMonth, setAuthorCountMonth] = useState(0);
   const [publisherCountMonth, setPublisherCountMonth] = useState(0);
-
+  const [filterOption, setFilterOption] = useState('Gandhi Bhavan');
 
   const fetchDataMonth = async () => {
     try {
@@ -49,6 +50,9 @@ const Dashboard = () => {
     }
   };
 
+  const handleFilter = (option) => {
+    setFilterOption(option);
+  };
   // Use the useEffect hook to fetch data when the component mounts
   useEffect(() => {
     fetchData();
@@ -84,13 +88,16 @@ const Dashboard = () => {
         <DashboardContainer title="Author Count" count={authorCount} total={authorCountMonth}/>
         <DashboardContainer title="Publisher Count" count={publisherCount} total={publisherCountMonth}/>
       </div>
+      <div className="flex justify-center">
+        <FilterOptions onFilter={handleFilter} />
+   </div>
       <div className="mt-8 mb-12 flex-col gap-3">
       <h3 className="custom-heading">Daily Leaderboard</h3>
-        <LeaderBoard />
+        <LeaderBoard location={filterOption} />
       </div>
       <div className="mt-8 mb-12 flex flex-col gap-3">
       <h3 className="custom-heading">Month Leaderboard</h3>
-        <MonthLeaderBoard/>
+        <MonthLeaderBoard location={filterOption} />
       </div>
       
       <h3 className="custom-heading">Previous Day Stats</h3>

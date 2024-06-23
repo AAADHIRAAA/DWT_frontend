@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTable, useSortBy } from "react-table";
 
-const MonthLeaderBoard = () => {
+const MonthLeaderBoard = ({location}) => {
   const [rowData, setRowData] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const currentDate = new Date();
@@ -14,7 +14,7 @@ const MonthLeaderBoard = () => {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, []);
+  }, [location]);
 
   const columns = useMemo(
     () => [
@@ -43,9 +43,9 @@ const MonthLeaderBoard = () => {
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
-
+      console.log("Location:", location);
       const response = await fetch(
-        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${currentMonth}/${currentYear}`
+        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${location}/${currentMonth}/${currentYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

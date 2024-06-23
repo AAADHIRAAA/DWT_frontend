@@ -9,6 +9,7 @@ import YearSelection from "../components/yeardropdown";
 import {ScrollArea} from "@/app/components/ui/scroll-area";
 import DialogBox from "../components/salary";
 import DialogBoxforprofile from "../components/profile";
+import DialogBoxForLocation from "../components/location";
 
 const ScanAgentDetails = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -90,6 +91,33 @@ const ScanAgentDetails = () => {
                 );
             },
         },
+        {
+          Header: "Location",
+          accessor: "location",
+        },
+          {
+              Header: "Assign",
+              accessor: "assign",
+              Cell: ({row}) => {
+                  <button onclick={()=>handleButtonClick(row.original)}>Change</button>
+                  const {username,userId} = row.original;
+                  const action = "Change";
+  
+                  const handleButtonClick = () => {
+                      fetchData().then();
+                  };
+  
+                  return (
+                      <DialogBoxForLocation
+                          action={action}
+                          userId={userId}
+                          username={username}
+                          handleButtonClick={handleButtonClick}
+                      />
+                  );
+              },
+          },
+  
 
 
     ],
@@ -166,7 +194,7 @@ const ScanAgentDetails = () => {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "30px",
+                gap: "20px",
               }}
             >
               <h1 className="text-3xl font-bold text-sky-800 ">ScanAgent Details</h1>
@@ -179,7 +207,7 @@ const ScanAgentDetails = () => {
               <table
                 {...getTableProps()}
                 className="min-w-full divide-y divide-gray-200"
-                style={{ minWidth: "60%" }}
+                style={{ minWidth: "50%" }}
               >
                 <thead className={"sticky top-0"}>
                   {headerGroups.map((headerGroup, index) => (

@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/app/components/ui/dialog"
-
+import Image from "next/image";
 
 const DialogBoxforprofile = ({
                         action,
@@ -59,7 +59,7 @@ const DialogBoxforprofile = ({
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
             <DialogTrigger className="text-sky-600">
-                <button className={"bg-sky-800 rounded-md text-white p-2 hover:bg-sky-600 w-20"}>{action}</button>
+                <button ><Image src={"/view.jpg"} width={40} height={50}/></button>
 
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white">

@@ -9,13 +9,32 @@ const DataForm = () => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
   const [correctionChecked, setCorrectionChecked] = useState(false);
+  const [userLocation, setUserLocation] = useState("");
+
+  const router = useRouter();
+
   useEffect(() => {
     if (user) {
       setUserId(user.id);
       setUserName(user.fullName);
+      fetchUserLocation(user.id);
     }
   }, [user]);
-  const router = useRouter();
+
+  const fetchUserLocation = async (userId) => {
+    try {
+      const response = await fetch(`https://trackserv.techfiz.com/api/v1/users/location/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.location);
+        setUserLocation(data.location); 
+      } else {
+        console.error("Failed to fetch user location");
+      }
+    } catch (error) {
+      console.error("Error fetching user location:", error);
+    }
+  };
   const [selectedScribe, setSelectedScribe] = useState(null);
   const getScribeNumber = () => {
     const storedScribe = localStorage.getItem("selectedScribe");
@@ -29,6 +48,7 @@ const DataForm = () => {
   useEffect(() => {
     getScribeNumber();
   }, []);
+
   const [formData, setFormData] = useState({
     correction: "",
     title: "",
@@ -73,6 +93,7 @@ const DataForm = () => {
           scribe_number: selectedScribe,
           userId: userId,
           userName: userName,
+          location: userLocation,
         };
 
         const response = await fetch(
