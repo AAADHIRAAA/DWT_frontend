@@ -43,9 +43,9 @@ const MonthLeaderBoard = ({location}) => {
   const fetchData = async () => {
     try {
       setIsLoadingStats(true);
-      console.log("Location:", location);
+      // console.log("Location:", location);
       const response = await fetch(
-        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${location}/${currentMonth}/${currentYear}`
+        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${currentMonth}/${currentYear}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
