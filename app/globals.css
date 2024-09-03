@@ -112,11 +112,11 @@ body {
   
   /* Table */
   table {
-	@apply mx-auto  sm:w-auto shadow-md border-collapse;
+	@apply mx-auto  sm:w-auto shadow-md  border-collapse;
   }
   
   th {
-	@apply p-4 bg-sky-800 text-white text-left;
+	@apply p-2 bg-sky-800 text-white text-left;
   }
   
   th:first-of-type {
@@ -136,7 +136,7 @@ body {
   }
   
   td {
-	@apply p-4 text-sky-700;
+	@apply p-2 text-sky-700;
   }
   
   /* Button Container */
