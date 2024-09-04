@@ -10,7 +10,10 @@ const DataForm = () => {
   const [userName, setUserName] = useState(null);
   const [correctionChecked, setCorrectionChecked] = useState(false);
   const [userLocation, setUserLocation] = useState("");
-
+  const [isFormEditable, setIsFormEditable] = useState(false);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(""); 
+  const [selectedScribe, setSelectedScribe] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,7 +30,13 @@ const DataForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log(data.location);
-        setUserLocation(data.location); 
+        if(!data.location){
+          setShowLocationPrompt(true);
+        }
+        else {
+          setUserLocation(data.location);
+          setIsFormEditable(true);
+        } 
       } else {
         console.error("Failed to fetch user location");
       }
@@ -35,7 +44,37 @@ const DataForm = () => {
       console.error("Error fetching user location:", error);
     }
   };
-  const [selectedScribe, setSelectedScribe] = useState(null);
+
+  const updateUserLocation = async (location) => {
+    try {
+        const response = await fetch(`https://trackserv.techfiz.com/api/v1/users/location/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ location }),
+        });
+
+        if (response.ok) {
+            setUserLocation(location);
+            setIsFormEditable(true);
+            setShowLocationPrompt(false);
+        } else {
+            console.error('Failed to update location');
+        }
+    } catch (error) {
+        console.error('Error updating location:', error);
+    }
+};
+const handleLocationSelect = () => {
+  console.log(selectedLocation);
+  if (selectedLocation) {
+      updateUserLocation(selectedLocation);
+  }
+};
+
+
+  
   const getScribeNumber = () => {
     const storedScribe = localStorage.getItem("selectedScribe");
     if (!storedScribe) {
@@ -158,6 +197,26 @@ const DataForm = () => {
 
   return (
     <>
+    {showLocationPrompt && (
+                <div className="flex justify-center align-middle border border-sky-800 shadow-md rounded-xl p-3 m-3">
+                    <div className="flex flex-col gap-2" >
+                        <h4><strong>Please choose your work location:</strong></h4>
+                        <div className="flex flex-row gap-4">
+                        <select 
+                            value={selectedLocation} 
+                            onChange={(e) => setSelectedLocation(e.target.value)}
+                            className="border border-sky-800 rounded-md"
+                        >
+                            <option value="">Select Location</option>
+                            <option value="Gandhi Bhavan">Gandhi Bhavan</option>
+                            <option value="Lalbagh Botanical Garden">Lalbagh Botanical Garden</option>
+                        </select>
+                        <button className="rounded-md bg-sky-600 px-2 py-1 text-white-900" onClick={handleLocationSelect}>Update</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
       <div className="p-4">
         <div className=" p-4 rounded-lg shadow-custom ">
           <form onSubmit={handleSubmit}>
@@ -209,6 +268,7 @@ const DataForm = () => {
                     name="correction"
                     checked={correctionChecked}
                     onChange={handleCorrectionChange}
+                    disabled={!isFormEditable}
                     style={{
                       marginLeft: "10px",
                       transform: "scale(2.0)",
@@ -223,6 +283,7 @@ const DataForm = () => {
                   value={formData.title}
                   onChange={handleInputChange}
                   required
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -231,6 +292,7 @@ const DataForm = () => {
                   value={formData.pages_scanned}
                   onChange={handleInputChange}
                   required
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -239,6 +301,7 @@ const DataForm = () => {
                   value={formData.ID_url}
                   onChange={handleInputChange}
                   required
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -246,6 +309,7 @@ const DataForm = () => {
                   name="author_name"
                   value={formData.author_name}
                   onChange={handleInputChange}
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -253,6 +317,7 @@ const DataForm = () => {
                   name="publisher_name"
                   value={formData.publisher_name}
                   onChange={handleInputChange}
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -260,6 +325,7 @@ const DataForm = () => {
                   name="year"
                   value={formData.year}
                   onChange={handleInputChange}
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -267,6 +333,7 @@ const DataForm = () => {
                   name="isbn"
                   value={formData.isbn}
                   onChange={handleInputChange}
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
                 <input
@@ -274,6 +341,7 @@ const DataForm = () => {
                   name="language"
                   value={formData.language}
                   onChange={handleInputChange}
+                  disabled={!isFormEditable}
                   style={{ padding: "10px", backgroundColor: "#dcdcdc" }}
                 />
               </div>
