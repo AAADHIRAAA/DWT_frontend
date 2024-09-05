@@ -40,8 +40,12 @@ const DialogBox = ({
                 }
             );
             console.log(response);
+            
+            console.log('clicked');
+            setIsOpen(false); 
             handleButtonClick();
             console.log("Data saved successfully!");
+            
         } catch (error) {
             console.error("Error saving data:", error.message);
         }

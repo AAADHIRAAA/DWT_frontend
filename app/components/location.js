@@ -38,6 +38,7 @@ const DialogBoxForLocation = ({
             );
             console.log(response);
             handleButtonClick();
+            setIsOpen(!isOpen);
             console.log("Data saved successfully!");
         } catch (error) {
             console.error("Error saving data:", error.message);
