@@ -44,6 +44,14 @@ const LeaderBoardMonth = () => {
         Header: "Scan Agent",
         accessor: "username",
         sortType: "alphanumeric",
+        Cell: ({ row }) => {
+          const { userId, username } = row.original;
+          return (
+            <a href={`/dailystats/${userId}/${selectedMonth}/${selectedYear}`} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+              {username}
+            </a>
+          );
+        },
       },
       {
         Header: "Total Books#",

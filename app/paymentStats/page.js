@@ -109,7 +109,7 @@ const PaymentStats = () => {
       setIsLoadingStats(true);
       
       const response = await fetch(
-        `https://trackserv.techfiz.com/api/v1/admin/leaderboard-month/${Month}/${Year}`
+        `https://trackserv.techfiz.com/api/v1/admin/getmonthlystats/${Month}/${Year}`
       );
 
 
@@ -119,7 +119,7 @@ const PaymentStats = () => {
 
       
       const fetchedData = await response.json();
-
+      console.log(fetchedData);
      
      // Filter out records where username is not null
     const filteredData = fetchedData.filter(item => item.username != null);

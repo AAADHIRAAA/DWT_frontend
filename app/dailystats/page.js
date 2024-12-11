@@ -26,7 +26,7 @@ const SpreadsheetMonth = () => {
   const [visibleData, setVisibleData] = useState([]); // Data currently visible in the table
 
   const [hasMore, setHasMore] = useState(true); // Whether more data is available
-  const PAGE_SIZE = 50;
+  const PAGE_SIZE = 150;
   const currentDate = new Date();
   const firstDayOfMonth = moment().startOf('month').toDate();
   const [selectedDate, setSelectedDate] = useState(new Date());
