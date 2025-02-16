@@ -128,7 +128,9 @@ const SpreadsheetMonth = (req,res) => {
         setVisibleData([...visibleData, ...nextData]);
         setHasMore(currentLength + PAGE_SIZE < fullData.length);
     };
-
+    function goBack() {
+        window.history.back(); 
+      }
     const {
         getTableProps,
         getTableBodyProps,
@@ -181,6 +183,10 @@ const SpreadsheetMonth = (req,res) => {
                         justifyContent: "center",
                         gap: "30px",
               }}>
+                        <button onClick={() => { window.history.back();}}
+                            className="bg-sky-800 hover:bg-sky-600 text-white py-1 px-2 rounded fixed top-20 left-10">
+                            &#8592; Back
+                        </button>
                         <h1 className="text-3xl font-bold text-sky-800">Daily Stats</h1>
                         <MonthSelection selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}/>
                         <YearSelection selectedYear={selectedYear} setSelectedYear={setSelectedYear}/>

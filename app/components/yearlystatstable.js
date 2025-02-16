@@ -8,7 +8,6 @@ import {
 
 const YearlyStats = () => {
 
-    console.log("yearrr");
   const [visibleData, setVisibleData] = useState([]); 
  
   const tableRef = useRef(null);
@@ -21,53 +20,175 @@ const YearlyStats = () => {
         accessor:"year",
       },
       {
+        Header:" Category",
+        accessor:"category",
+        Cell:({})=>(
+          <div>
+            <div>
+            BooksCount
+            </div>
+            <div>
+              PagesCount
+            </div>
+          </div>
+        )
+      },
+      {
         Header: "January",
         accessor: "January",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "Febraury",
         accessor: "February",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "March",
         accessor: "March",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "April",
         accessor: "April",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "May",
         accessor: "May",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       
       {
         Header:"June",
-        accessor:"June"
+        accessor:"June",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "July",
         accessor: "July",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "August",
         accessor: "August",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "September",
         accessor: "September",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "October",
         accessor: "October",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header: "November",
         accessor: "November",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       },
       {
         Header:"December",
         accessor:"December",
+        Cell: ({ value }) =>
+          value ? (
+            <div>
+              <div>{value.booksCount}</div>
+              <div>{value.pagesCount}</div>
+            </div>
+          ) : (
+            " "
+          ),
       }
     ],
     []
@@ -84,7 +205,7 @@ const YearlyStats = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const fetchedData = await response.json();
-      console.log(fetchedData);
+   
       if (
         fetchedData.pagesScannedThisYear &&
         fetchedData.pagesScannedThisYear.length > 0
@@ -94,7 +215,10 @@ const YearlyStats = () => {
             year: item.year,
           };
           item.data.forEach((monthData) => {
-            formattedItem[monthData.month] = monthData.count  || '-';
+            formattedItem[monthData.month] ={
+              booksCount: monthData.books || ' ',
+             pagesCount: monthData.count  || ' '
+            }
           });
           return formattedItem;
         });

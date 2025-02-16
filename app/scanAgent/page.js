@@ -86,6 +86,8 @@ const ScanAgentDetails = () => {
                         action={action}
                         userId={userId}
                         username={username}
+                        month={selectedMonth}
+                        year={selectedYear}
                         handleButtonClick={handleButtonClick}
                     />
                 );
@@ -121,7 +123,7 @@ const ScanAgentDetails = () => {
 
 
     ],
-    []
+    [selectedMonth,selectedYear]
   );
 
   const fetchData = async () => {

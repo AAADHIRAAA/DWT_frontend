@@ -7,6 +7,8 @@ const DialogBox = ({
                        action,
                        userId,
                        username,
+                       month,
+                       year,
                        handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +20,7 @@ const DialogBox = ({
            
         }
     }
+   
 
     const handleSubmit = async () => {
 
@@ -28,9 +31,9 @@ const DialogBox = ({
                 username:username,
                 actualPay:salary,
             };
-            console.log(data)
+            
             const response = await fetch(
-                "https://trackserv.techfiz.com/api/v1/admin/actualPay",
+                `https://trackserv.techfiz.com/api/v1/admin/actualPay/${month}/${year}`,
                 {
                     method: "POST",
                     headers: {

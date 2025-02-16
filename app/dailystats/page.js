@@ -246,11 +246,11 @@ const SpreadsheetMonth = () => {
                 
               </div>
             </div> */}
-            <div className="flex justify-end mb-4 text-sky-800 mr-8">
+            <div className="flex justify-end mb-4 text-sky-800 mr-16">
             <Globalfilter
               filter={globalFilter}
               setFilter={setGlobalFilter}
-              className="mr-8"
+              className="mr-16"
             />
           </div>
             <div className=" h-[500px]">

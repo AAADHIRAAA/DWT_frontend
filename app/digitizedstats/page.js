@@ -16,7 +16,7 @@ import YearSelection from "../components/yeardropdown";
 import {BiChevronDown, BiChevronUp} from "react-icons/bi";
 import PieChart from "../components/dailystatsGraph";
 import YearlyStats from "../components/yearlystatstable";
-// import LineGraph from "../components/lineGraph";
+import LineGraph from "../components/lineGraph";
 
 const ScansForYear = () => {
   const currentYear = new Date().getFullYear();
@@ -132,7 +132,7 @@ const ScansForYear = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const fetchedData = await response.json();
-      console.log(fetchedData);
+      
       if (fetchedData.pagesScannedThisYear && fetchedData.pagesScannedThisYear.length > 0) {
         const pieChartData = fetchedData.pagesScannedThisYear.map((item) => ({
           name: item.month,
@@ -158,7 +158,7 @@ const ScansForYear = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const fetchedData = await response.json();
-      console.log(fetchedData);
+      
       if (fetchedData.pagesScannedThisYear && fetchedData.pagesScannedThisYear.length > 0) {
         const LineChartData = fetchedData.pagesScannedThisYear.map((item) => ({
           year: item.year,
@@ -234,14 +234,14 @@ const ScansForYear = () => {
       fetchYearStats().then();
     },[selectedYear]);
 
-    // useEffect(()=>{
-    //   fetchAllYearStats().then();
-    //   console.log(lineData);
-    // },[]);
+    useEffect(()=>{
+      fetchAllYearStats().then();
+      console.log(lineData);
+    },[]);
     useEffect(() => {
     
       setChartData(chartData);
-      console.log(chartData);
+      
     }, [chartData]);
 
     useEffect(() => {
@@ -318,7 +318,7 @@ const ScansForYear = () => {
           <div className="flex flex-row items-center justify-center">
               <div className="mb-8 h-full">
                
-                {/* <LineGraph data ={lineData}/> */}
+                <LineGraph data ={lineData}/>
                 <YearlyStats/>
               </div>
               

@@ -15,15 +15,19 @@ const DialogBox = ({
                         status,
                         date,
                         actualPayment,
+                        weekOff,
+                        holiday,
+                        month,
+                        year,
                         handleButtonClick
                    }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const [bonus, setBonus] = useState(0);
-    const [detect, setDetect] = useState(0);
-    const [detectday, setDetectday] = useState(0);
+    const [deduct, setdeduct] = useState(0);
+    const [deductday, setdeductday] = useState(0);
     const [isBonusFieldVisible, setIsBonusFieldVisible] = useState(false);
-    const [isDetectFieldVisible, setIsDetectFieldVisible] = useState(false);
+    const [isdeductFieldVisible, setIsdeductFieldVisible] = useState(false);
     const [paid, setPaid]=useState(status);
     const [ paidDate, setPaidDate] = useState(date);
   
@@ -33,16 +37,16 @@ const DialogBox = ({
             calculateUpdatedPayment();
         }
     };
-    const handleDetectChange = (e) => {
+    const handledeductChange = (e) => {
         if (!isNaN(Number(e))) {
-            setDetect(Number(e));
+            setdeduct(Number(e));
             calculateUpdatedPayment();
         }
 
     };
-    const handleDetectDayChange = (e)=>{
+    const handledeductDayChange = (e)=>{
         if(!isNaN(Number(e))){
-            setDetectday(Number(e));
+            setdeductday(Number(e));
             calculateUpdatedPayment();
         }
     }
@@ -53,22 +57,20 @@ const DialogBox = ({
         calculateUpdatedPayment();
 
     };
-    const removeDetect = () => {
-        setDetect(0);
-        setIsDetectFieldVisible(false);
+    const removededuct = () => {
+        setdeduct(0);
+        setIsdeductFieldVisible(false);
         calculateUpdatedPayment();
 
     };
-    const detectSalary = () => {
-        setIsDetectFieldVisible(!isDetectFieldVisible);
-        
-
+    const deductSalary = () => {
+        setIsdeductFieldVisible(!isdeductFieldVisible);
     };
 
 
     const calculateUpdatedPayment = () => {
 
-        return (payment + bonus - detect -detectday*singleDaySalary);
+        return (payment + bonus - deduct -deductday*singleDaySalary);
     };
 
     const updateStatus =()=>{
@@ -82,7 +84,7 @@ const DialogBox = ({
         setIsBonusFieldVisible(!isBonusFieldVisible);
 
     }
-
+  
     const savePayment = async () => {
 
         const salary = calculateUpdatedPayment();
@@ -94,9 +96,10 @@ const DialogBox = ({
                 totalDays:totalWorkingDays,
                 payment:salary,
             };
-            console.log(data)
+         
+
             const response = await fetch(
-                "https://trackserv.techfiz.com/api/v1/admin/payment",
+                `https://trackserv.techfiz.com/api/v1/admin/payment/${month}/${year}`,
                 {
                     method: "POST",
                     headers: {
@@ -113,8 +116,7 @@ const DialogBox = ({
         }
     };
 
-    
-   
+  
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
@@ -138,6 +140,8 @@ const DialogBox = ({
                                 <p>Payment: {payment}</p>
                                 <p>Total Working Days: {totalWorkingDays}</p>
                                 <p>Leaves Taken: {leaves}</p>
+                                <p>WeekOff: {weekOff}</p>
+                                <p>Holiday: {holiday}</p>
                                 <p>Status: {paid}</p>
                                 <p>Date of Payment:{paidDate}</p>
                             </>
@@ -150,6 +154,8 @@ const DialogBox = ({
                                 <p>Payment: {calculateUpdatedPayment()}</p>
                                 <p>Total Working Days: {totalWorkingDays}</p>
                                 <p>Leaves Taken: {leaves}</p>
+                                <p>WeekOff: {weekOff}</p>
+                                <p>Holiday: {holiday}</p>
                                 <p>Status: {paid}</p>
                                 <div className="grid grid-cols-3 items-center gap-4">
                         <span className=" font-bold text-center col-span-3">
@@ -196,11 +202,11 @@ const DialogBox = ({
                                     <button
                                         type="button"
                                         className="border border-gray-300 bg-sky-800 hover:bg-sky-600 text-white rounded-md px-2 py-2 w-30 "
-                                        onClick={detectSalary}
+                                        onClick={deductSalary}
                                     >
-                                        Detect Salary
+                                        Deduct Salary
                                     </button>
-                                    {isDetectFieldVisible && (
+                                    {isdeductFieldVisible && (
                                         <div className={" overflow-auto max-h-[40vh]"}>
                                             <div id={"bonus-info"}>
                                                 <div
@@ -209,18 +215,18 @@ const DialogBox = ({
                                                     <div className="flex flex-row align-middle items-center justify-center">
                                                     <div className="flex flex-col m-3">
                                                         <div className="grid grid-cols-3">
-                                                            <label>Detect Amt: </label>
+                                                            <label>Deduct Amt: </label>
                                                             <input
                                                                 autoFocus
                                                                 className="border border-gray-300 rounded-md p-1 col-span-2"
-                                                                value={detect}
+                                                                value={deduct}
                                                                 
-                                                                onChange={(e)=>handleDetectChange(e.target.value)}
+                                                                onChange={(e)=>handledeductChange(e.target.value)}
                                                             ></input>
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <button onClick={removeDetect}>
+                                                        <button onClick={removededuct}>
                                                             <Minus className={"rounded-xl bg-blue-300"} />
                                                         </button>
                                                     </div>
@@ -228,18 +234,18 @@ const DialogBox = ({
                                                     <div className="flex flex-row justify-center items-center align-middle">
                                                     <div className="flex flex-col m-3">
                                                         <div className="grid grid-cols-3">
-                                                            <label>Detect Wday: </label>
+                                                            <label>Deduct Wday: </label>
                                                             <input
                                                                 autoFocus
                                                                 className="border border-gray-300 rounded-md p-1 col-span-2"
-                                                                value={detectday}
+                                                                value={deductday}
                                                                 
-                                                                onChange={(e)=>handleDetectDayChange(e.target.value)}
+                                                                onChange={(e)=>handledeductDayChange(e.target.value)}
                                                             ></input>
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <button onClick={removeDetect}>
+                                                        <button onClick={removededuct}>
                                                             <Minus className={"rounded-xl bg-blue-300"} />
                                                         </button>
                                                     </div>

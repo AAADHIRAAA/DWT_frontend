@@ -68,7 +68,7 @@ const PaymentStats = () => {
         Header: "Action",
         accessor: "action",
         Cell: ({row}) => {
-          const {username, payment, totalWorkingDays, leaves,status,userId,date,singleDaySalary,actualPayment} = row.original;
+          const {username, payment, totalWorkingDays, leaves,status,userId,date,singleDaySalary,weekOff,holiday,actualPayment} = row.original;
           const action = status === "Paid" ? "View" : "Pay";
 
           const handleButtonClick = () => {
@@ -94,13 +94,17 @@ const PaymentStats = () => {
                   status={status}
                   date={date}
                   actualPayment = {actualPayment}
+                  weekOff = {weekOff}
+                  holiday ={holiday}
+                  month ={Month}
+                  year ={Year}
                   handleButtonClick={handleButtonClick}
               />
           );
         },
       },
     ],
-    []
+    [Month,Year]
   );
 
   const fetchData = async () => {
