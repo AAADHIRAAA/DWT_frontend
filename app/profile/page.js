@@ -33,16 +33,16 @@ const formSchema = z.object({
     name: z.string().min(1, {
         message: 'Name is required',
     }),
-    age: z.number().min(1, "Age is Required"),
+    age: z.coerce.number().min(1, "Age is Required"),
     gender: z.string().min(1, "Required"),
     bloodGroup: z.string().min(1, "BloodGroup is Required"),
-    emergencyContact: z.number().refine(data =>{
+    emergencyContact: z.coerce.number().refine(data =>{
         const strData = String(data); // Convert to string
         return strData.length === 10 ;
     }, {
         message: "Number must be 10 digits",
     }),
-    phone: z.number().refine(data => {
+    phone: z.coerce.number().refine(data => {
         const strData = String(data); // Convert to string
         return strData.length === 10 ;
     },{
@@ -80,11 +80,11 @@ const formSchema = z.object({
             // Set default values for form fields
 
             form.setValue("name", userProfileData.userName);
-            form.setValue("age", userProfileData.age);
+            form.setValue("age", parseInt(userProfileData.age) || 0);
             form.setValue("gender", userProfileData.gender);
             form.setValue("bloodGroup", userProfileData.bloodGroup);
-            form.setValue("emergencyContact", userProfileData.emergency);
-            form.setValue("phone", userProfileData.phone);
+            form.setValue("emergencyContact", parseInt(userProfileData.emergency) || 0);
+            form.setValue("phone", parseInt(userProfileData.phone) || 0);
             form.setValue("healthIssues", userProfileData.issues);
             form.setValue("permanentAddress",userProfileData.permanentAddress);
             form.setValue("currentAddress",userProfileData.currentAddress);
